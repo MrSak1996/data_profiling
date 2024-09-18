@@ -11,8 +11,7 @@
                     Download Files
                 </h1>
                 <ul>
-
-                    <li>
+                    <li v-for="item in uploadedFiles" :key="item.filename">
                         <article tabindex="0"
                             class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 mb-2 hover:border-green-500 focus:outline-none focus:border-green-500">
                             <span class="flex-none pt-1 pr-2">
@@ -21,216 +20,22 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
                                 </svg>
-
                             </span>
                             <div class="flex-1">
                                 <header class="mb-1">
-
                                     <h1 class="inline">
-                                        RFFA-Excel-Data.xlsx
+                                        {{ item.filename }}
                                     </h1>
                                 </header>
-                                <p class="text-gray-600">
-
-                                </p>
+                                
                                 <footer class="text-gray-500 mt-2 text-sm">
-                                    Upload Date: Friday 22:16
+                                    Date Uploaded: {{ item.updated_at }}
                                 </footer>
                             </div>
                         </article>
                     </li>
-                    <li>
-                        <article tabindex="0"
-                            class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 mb-2 hover:border-green-500 focus:outline-none focus:border-green-500">
-                            <span class="flex-none pt-1 pr-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-                                </svg>
-
-                            </span>
-                            <div class="flex-1">
-                                <header class="mb-1">
-
-                                    <h1 class="inline">
-                                        RFFA-Excel-Data.xlsx
-                                    </h1>
-                                </header>
-                                <p class="text-gray-600">
-
-                                </p>
-                                <footer class="text-gray-500 mt-2 text-sm">
-                                    Upload Date: Friday 22:16
-                                </footer>
-                            </div>
-                        </article>
-                    </li>
-                    <li>
-                        <article tabindex="0"
-                            class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 mb-2 hover:border-green-500 focus:outline-none focus:border-green-500">
-                            <span class="flex-none pt-1 pr-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-                                </svg>
-
-                            </span>
-                            <div class="flex-1">
-                                <header class="mb-1">
-
-                                    <h1 class="inline">
-                                        RFFA-Excel-Data.xlsx
-                                    </h1>
-                                </header>
-                                <p class="text-gray-600">
-
-                                </p>
-                                <footer class="text-gray-500 mt-2 text-sm">
-                                    Upload Date: Friday 22:16
-                                </footer>
-                            </div>
-                        </article>
-                    </li>
-                    <li>
-                        <article tabindex="0"
-                            class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 mb-2 hover:border-green-500 focus:outline-none focus:border-green-500">
-                            <span class="flex-none pt-1 pr-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-                                </svg>
-
-                            </span>
-                            <div class="flex-1">
-                                <header class="mb-1">
-
-                                    <h1 class="inline">
-                                        RFFA-Excel-Data.xlsx
-                                    </h1>
-                                </header>
-                                <p class="text-gray-600">
-
-                                </p>
-                                <footer class="text-gray-500 mt-2 text-sm">
-                                    Upload Date: Friday 22:16
-                                </footer>
-                            </div>
-                        </article>
-                    </li>
-                    <li>
-                        <article tabindex="0"
-                            class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 mb-2 hover:border-green-500 focus:outline-none focus:border-green-500">
-                            <span class="flex-none pt-1 pr-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-                                </svg>
-
-                            </span>
-                            <div class="flex-1">
-                                <header class="mb-1">
-
-                                    <h1 class="inline">
-                                        RFFA-Excel-Data.xlsx
-                                    </h1>
-                                </header>
-                                <p class="text-gray-600">
-
-                                </p>
-                                <footer class="text-gray-500 mt-2 text-sm">
-                                    Upload Date: Friday 22:16
-                                </footer>
-                            </div>
-                        </article>
-                    </li>
-                    <li>
-                        <article tabindex="0"
-                            class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 mb-2 hover:border-green-500 focus:outline-none focus:border-green-500">
-                            <span class="flex-none pt-1 pr-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-                                </svg>
-
-                            </span>
-                            <div class="flex-1">
-                                <header class="mb-1">
-
-                                    <h1 class="inline">
-                                        RFFA-Excel-Data.xlsx
-                                    </h1>
-                                </header>
-                                <p class="text-gray-600">
-
-                                </p>
-                                <footer class="text-gray-500 mt-2 text-sm">
-                                    Upload Date: Friday 22:16
-                                </footer>
-                            </div>
-                        </article>
-                    </li>
-                    <li>
-                        <article tabindex="0"
-                            class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 mb-2 hover:border-green-500 focus:outline-none focus:border-green-500">
-                            <span class="flex-none pt-1 pr-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-                                </svg>
-
-                            </span>
-                            <div class="flex-1">
-                                <header class="mb-1">
-
-                                    <h1 class="inline">
-                                        RFFA-Excel-Data.xlsx
-                                    </h1>
-                                </header>
-                                <p class="text-gray-600">
-
-                                </p>
-                                <footer class="text-gray-500 mt-2 text-sm">
-                                    Upload Date: Friday 22:16
-                                </footer>
-                            </div>
-                        </article>
-                    </li>
-                    <li>
-                        <article tabindex="0"
-                            class="cursor-pointer border rounded-md p-3 bg-white flex text-gray-700 mb-2 hover:border-green-500 focus:outline-none focus:border-green-500">
-                            <span class="flex-none pt-1 pr-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-                                </svg>
-
-                            </span>
-                            <div class="flex-1">
-                                <header class="mb-1">
-
-                                    <h1 class="inline">
-                                        RFFA-Excel-Data.xlsx
-                                    </h1>
-                                </header>
-                                <p class="text-gray-600">
-
-                                </p>
-                                <footer class="text-gray-500 mt-2 text-sm">
-                                    Upload Date: Friday 22:16
-                                </footer>
-                            </div>
-                        </article>
-                    </li>
-
-
                 </ul>
+
             </section>
             <section aria-label="main content" class="flex min-h-0 flex-col flex-auto border-l">
                 <!-- content navigation -->
@@ -455,10 +260,8 @@
                         </div>
                     </div>
 
-                    <TabsTimelineModule 
-                    :invalid_data="invalid_data" 
-                    :checkDataMatches="checkDataMatches"
-                    :totalRecords="formattedTotalRecords" />
+                    <TabsTimelineModule :invalid_data="invalid_data" :checkDataMatches="checkDataMatches"
+                        :totalRecords="formattedTotalRecords" />
                 </div>
 
 
@@ -550,6 +353,7 @@ export default {
 
         const unmatchedRecords = ref([]);
         const matchedRecords = ref([]);
+        const uploadedFiles = ref([]);
         const matchedCount = ref(0);
         const processingTime = ref(0);
 
@@ -627,6 +431,8 @@ export default {
             try {
                 const response = await axios.get('api/uploaded-files'); // Replace with your API endpoint
 
+                //output
+
                 // Ensure the response contains the expected data
                 totalUploadedRecords.value = response.data[0].uploaded_files;
 
@@ -638,7 +444,9 @@ export default {
         const fetchUploadedFiles = async () => {
             try {
                 const response = await axios.get('api/countUploadedFiles'); // Replace with your API endpoint
-                totalFiles.value = response.data[0].count;
+                uploadedFiles.value = response.data.data;
+                console.log(response.data);
+                totalFiles.value = response.data.count;
             } catch (error) {
 
             }
@@ -719,7 +527,7 @@ export default {
                         { data: 'PROFESSION' },
                         { data: 'SOURCEOFFUNDS' },
                         { data: 'MOTHERMAIDENNAME' },
-                  
+
                     ],
                     // Adjust the width of the first column
                     columnDefs: [
@@ -754,7 +562,7 @@ export default {
 
 
         };
-     
+
 
 
 
@@ -857,8 +665,9 @@ export default {
             totalItems,
             checkDataMatches,
             unmatchedRecords,
-            matchedRecords
-                };
+            matchedRecords,
+            uploadedFiles
+        };
     },
 };  
 </script>

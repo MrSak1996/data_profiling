@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Http\Controllers\StringComparisonController;
+
 use Facade\FlareClient\Http\Exceptions\InvalidData;
 use Illuminate\Http\Request;
 use App\Models\OnbintModel;
@@ -24,8 +27,7 @@ use App\Imports\UsersImport;
 use App\Imports\OnbintImport;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
-
-
+use Psy\Command\WhereamiCommand;
 
 class DataProfilingController extends Controller
 {
@@ -101,7 +103,6 @@ class DataProfilingController extends Controller
 
         // Return the results as JSON
         return response()->json($results);
-
     }
 
     public function saveExcelData(Request $request)
@@ -255,12 +256,37 @@ class DataProfilingController extends Controller
 
     public function countUploadedFiles()
     {
-        $results = InvalidModel::selectRaw('filename, COUNT(*) as count')
-            ->groupBy('filename')
-            ->get();
+        // In your Laravel controller
 
-        return response()->json($results);
+        $results = InvalidModel::select(DB::raw('
+                id,
+                filename,
+                specialchar,
+                null_values,
+                below_2letters,
+                unwanted_char,
+                date_format,
+                unwanted_spaces,
+                invalid_address,
+                updated_at,
+                created_at'))
+            ->get();
+        $recordCount = $results->count();
+        if ($recordCount === 0) {
+            return response()->json([
+                'message' => 'No records found',
+                'count' => $recordCount
+            ], 404);
+        }
+
+        // Return the records and the count
+        return response()->json([
+            'count' => $recordCount,
+            'data' => $results
+        ]);
     }
+
+
 
     public function getInvalidData()
     {
@@ -270,13 +296,13 @@ class DataProfilingController extends Controller
 
     public function checkDataMatches()
     {
-        $chunkSize = 100; 
+        $chunkSize = 100;
         $nonMatchingRecords = [];
         $matchingRecords = [];
 
 
-        OnbintModel::with('farmers')->limit(1000)->chunk($chunkSize, function ($onbintModels) use (&$nonMatchingRecords, &$matchingRecords) {
-  
+        OnbintModel::with('farmers')->chunk($chunkSize, function ($onbintModels) use (&$nonMatchingRecords, &$matchingRecords) {
+
             for ($i = 0; $i < count($onbintModels); $i++) {
                 $onbintModel = $onbintModels[$i];
 
@@ -307,7 +333,7 @@ class DataProfilingController extends Controller
                         $onbintFirstName === $farmerFirstName &&
                         $onbintLastName === $farmerLastName &&
                         $onbintMiddleName === $farmerMiddleName &&
-                        $onbintBirthdate === $farmerBirthdate &&                        
+                        $onbintBirthdate === $farmerBirthdate &&
                         $onbintSex === $farmerSex
                     ) {
                         // If all fields match, add to matching records and mark as matching
@@ -340,7 +366,7 @@ class DataProfilingController extends Controller
                             'MOTHERMAIDENNAME' => $onbintModel->MOTHERMAIDENNAME,
                             'NOOFFARMPARCEL' => $onbintModel->NOOFFARMPARCEL,
                             'TFA' => $onbintModel->TFA,
-                            'remarks' => null, 
+                            'remarks' => null,
                             'created_at' => now(),
                             'updated_at' => now(),
                         ]);
@@ -490,11 +516,11 @@ class DataProfilingController extends Controller
     public function exportUnmatch()
     {
         $unmatchedData = UnmatchedOnbintRecord::all(); // Fetch your data
-    
+
         // Create a new Spreadsheet
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-    
+
         // Define the headers
         $headers = [
             'RSBSASYSTEMGENERATEDNUMBER',
@@ -521,17 +547,17 @@ class DataProfilingController extends Controller
             'NOOFFARMPARCEL',
             'TOTAL FARM AREA'
         ];
-    
+
         // Define styles
         $redFontStyle = [
             'font' => [
                 'color' => ['rgb' => 'FF0000']
             ]
         ];
-    
+
         $specialCharPattern = '/[^a-zA-Z0-9]/';
         $dateFormat = '/^\d{4}-\d{2}-\d{2}$/'; // YYYY-MM-DD format for birthdate
-    
+
         // Add headers to the first row
         $columnIndex = 'A';
         foreach ($headers as $header) {
@@ -539,15 +565,15 @@ class DataProfilingController extends Controller
             $sheet->getColumnDimension($columnIndex)->setAutoSize(true);
             $columnIndex++;
         }
-    
+
         // Separate invalid and valid data
         $invalidData = [];
         $validData = [];
-    
+
         foreach ($unmatchedData as $data) {
             $isValid = true;
             $invalidColumns = [];
-    
+
             // Validate FIRSTNAME, MIDDLENAME, LASTNAME: Allow letters and spaces, at least 2 letters
             foreach (['FIRSTNAME', 'MIDDLENAME', 'LASTNAME'] as $column) {
                 $cellValue = $data->$column;
@@ -556,35 +582,35 @@ class DataProfilingController extends Controller
                     $invalidColumns[] = $column;
                 }
             }
-    
+
             // Validate EXTENSIONNAME: Allow only letters
             $cellValue = $data->EXTENSIONNAME;
             if (!preg_match('/^[A-Za-z]*$/', $cellValue)) {
                 $isValid = false;
                 $invalidColumns[] = 'EXTENSIONNAME';
             }
-    
+
             // Validate BIRTHDATE: Must be in YYYY-MM-DD format
             $cellValue = $data->BIRTHDATE;
             if (!preg_match($dateFormat, $cellValue) || !strtotime($cellValue)) {
                 $isValid = false;
                 $invalidColumns[] = 'BIRTHDATE';
             }
-    
+
             // Validate MOBILENO: Must be 11 digits
             $cellValue = $data->MOBILENO;
             if (!preg_match('/^\d{11}$/', $cellValue)) {
                 $isValid = false;
                 $invalidColumns[] = 'MOBILENO';
             }
-    
+
             // Validate SEX: Must be either 'FEMALE' or 'MALE'
             $cellValue = $data->SEX;
             if (!in_array(strtoupper($cellValue), ['FEMALE', 'MALE'])) {
                 $isValid = false;
                 $invalidColumns[] = 'SEX';
             }
-    
+
             // Store data in the appropriate array
             if ($isValid) {
                 $validData[] = $data;
@@ -592,10 +618,10 @@ class DataProfilingController extends Controller
                 $invalidData[] = $data;
             }
         }
-    
+
         // Merge invalid and valid data, ensuring invalid entries are at the top
         $mergedData = array_merge($invalidData, $validData);
-    
+
         // Add the data rows
         $rowIndex = 2;
         foreach ($mergedData as $data) {
@@ -624,10 +650,10 @@ class DataProfilingController extends Controller
                 'V' => $data->NOOFFARMPARCEL,
                 'W' => $data->TFA
             ];
-    
+
             foreach ($rowValues as $column => $value) {
                 $sheet->setCellValue($column . $rowIndex, $value);
-    
+
                 // Apply red font to invalid data
                 if (
                     (in_array($column, ['B', 'C', 'D']) && !preg_match('/^(?!.*\s{2,})([A-Za-z]+\s?)+$/', $value)) ||
@@ -639,10 +665,10 @@ class DataProfilingController extends Controller
                     $sheet->getStyle($column . $rowIndex)->applyFromArray($redFontStyle);
                 }
             }
-    
+
             $rowIndex++;
         }
-    
+
         // Output the spreadsheet as a downloadable Excel file
         $writer = new Xlsx($spreadsheet);
         $fileName = 'unmatched_data.xlsx';
@@ -651,12 +677,157 @@ class DataProfilingController extends Controller
         header('Cache-Control: max-age=0');
         $writer->save('php://output');
     }
-    
-    
+
+    public function getDuplicateDataStaging()
+    {
+
+        $query = OnbintModel::whereIn('RSBSASYSTEMGENERATEDNUMBER', function ($subQuery) {
+            $subQuery->select('RSBSASYSTEMGENERATEDNUMBER')
+                ->from('dp_onbint_staging')
+                ->whereNotNull('ID')
+                ->groupBy('RSBSASYSTEMGENERATEDNUMBER')
+                ->havingRaw('COUNT(*) > 1');
+        })
+            ->orderBy('RSBSASYSTEMGENERATEDNUMBER')
+            ->orderBy('FIRSTNAME')
+            ->orderBy('LASTNAME')
+            ->orderBy('SEX')
+            ->get();
 
 
 
 
+        // Count the number of records
+        $recordCount = $query->count();
 
+        // Check if no records were found
+        if ($recordCount === 0) {
+            return response()->json([
+                'message' => 'No records found',
+                'count' => $recordCount
+            ], 404);
+        }
+
+        // Return the records and the count
+        return response()->json([
+            'count' => $recordCount,
+            'data' => $query
+        ]);
+    }
+
+    public function findDuplicates()
+{
+    $stringComparison = new StringComparisonController();
+    $duplicates = []; // Array to hold the duplicate results
+
+    // Subquery to get potential duplicates based on selected fields
+    $subquery = OnbintModel::select(
+            'RSBSASYSTEMGENERATEDNUMBER',
+            'FIRSTNAME',
+            'MIDDLENAME',
+            'LASTNAME',
+            'SEX',
+            'BIRTHDATE',
+            OnbintModel::raw('COUNT(*) as duplicate_count')
+        )
+        ->groupBy(
+            'RSBSASYSTEMGENERATEDNUMBER',
+            'FIRSTNAME',
+            'MIDDLENAME',
+            'LASTNAME',
+            'SEX',
+            'BIRTHDATE'
+        )
+        ->havingRaw('COUNT(*) > 1')
+        ->orderBy('duplicate_count', 'DESC');
+
+    // Main query to include additional fields
+    $query = OnbintModel::joinSub($subquery, 'duplicates', function ($join) {
+            $join->on('dp_onbint_staging.RSBSASYSTEMGENERATEDNUMBER', '=', 'duplicates.RSBSASYSTEMGENERATEDNUMBER')
+                ->on('dp_onbint_staging.FIRSTNAME', '=', 'duplicates.FIRSTNAME')
+                ->on('dp_onbint_staging.MIDDLENAME', '=', 'duplicates.MIDDLENAME')
+                ->on('dp_onbint_staging.LASTNAME', '=', 'duplicates.LASTNAME')
+                ->on('dp_onbint_staging.SEX', '=', 'duplicates.SEX')
+                ->on('dp_onbint_staging.BIRTHDATE', '=', 'duplicates.BIRTHDATE');
+        })
+        ->select(
+            'dp_onbint_staging.RSBSASYSTEMGENERATEDNUMBER',
+            'dp_onbint_staging.FIRSTNAME',
+            'dp_onbint_staging.MIDDLENAME',
+            'dp_onbint_staging.LASTNAME',
+            'dp_onbint_staging.SEX',
+            'dp_onbint_staging.BIRTHDATE',
+            'dp_onbint_staging.STREETNO_PUROKNO',
+            'dp_onbint_staging.BARANGAY',
+            'dp_onbint_staging.CITYMUNICIPALITY',
+            'dp_onbint_staging.DISTRICT',
+            'dp_onbint_staging.PROVINCE',
+            'dp_onbint_staging.REGION',
+            'duplicates.duplicate_count'
+        )
+        ->orderBy('duplicates.duplicate_count', 'DESC')
+        ->chunk(1000, function ($results) use ($stringComparison, &$duplicates) {
+            foreach ($results as $row) {
+                // Compare names using Jaro-Winkler algorithm
+                $records = OnbintModel::where('dp_onbint_staging.RSBSASYSTEMGENERATEDNUMBER', $row->RSBSASYSTEMGENERATEDNUMBER)
+                    ->whereRaw('TRIM(LOWER(dp_onbint_staging.FIRSTNAME)) = ?', [trim(strtolower($row->FIRSTNAME))])
+                    ->whereRaw('TRIM(LOWER(dp_onbint_staging.LASTNAME)) = ?', [trim(strtolower($row->LASTNAME))])
+                    ->whereRaw('TRIM(LOWER(dp_onbint_staging.MIDDLENAME)) = ?', [trim(strtolower($row->MIDDLENAME))])
+                    ->where('dp_onbint_staging.SEX', $row->SEX)
+                    ->where('dp_onbint_staging.BIRTHDATE', $row->BIRTHDATE)
+                    ->get(); // Retrieve records with similar attributes
+
+                if ($records->count() > 1) {
+                    $recordA = $records->shift()->toArray(); // The first record
+                    $similarRecords = [];
+
+                    foreach ($records as $recordB) {
+                        $similarity = $stringComparison->getJaroWinkler(
+                            $recordA['FIRSTNAME'] . ' ' . $recordA['MIDDLENAME'] . ' ' . $recordA['LASTNAME'],
+                            $recordB['FIRSTNAME'] . ' ' . $recordB['MIDDLENAME'] . ' ' . $recordB['LASTNAME']
+                        );
+
+                        // Set a threshold for similarity (e.g., 0.50)
+                        if ($similarity > 0.50) {
+                            $similarRecords[] = [
+                                'FIRSTNAME' => $recordB->FIRSTNAME,
+                                'MIDDLENAME' => $recordB->MIDDLENAME,
+                                'LASTNAME' => $recordB->LASTNAME,
+                                'SEX' => $recordB->SEX,
+                                'BIRTHDATE' => $recordB->BIRTHDATE,
+                                'STREETNO_PUROKNO' => $recordB->STREETNO_PUROKNO,
+                                'BARANGAY' => $recordB->BARANGAY,
+                                'CITYMUNICIPALITY' => $recordB->CITYMUNICIPALITY,
+                                'DISTRICT' => $recordB->DISTRICT,
+                                'PROVINCE' => $recordB->PROVINCE,
+                                'REGION' => $recordB->REGION,
+                                'similarity' => $similarity
+                            ];
+                        }
+                    }
+
+                    if (!empty($similarRecords)) {
+                        $duplicates[] = [
+                            'RSBSASYSTEMGENERATEDNUMBER' => $recordA['RSBSASYSTEMGENERATEDNUMBER'],
+                            'FIRSTNAME' => $recordA['FIRSTNAME'],
+                            'MIDDLENAME' => $recordA['MIDDLENAME'],
+                            'LASTNAME' => $recordA['LASTNAME'],
+                            'SEX' => $recordA['SEX'],
+                            'BIRTHDATE' => $recordA['BIRTHDATE'],
+                            'STREETNO_PUROKNO' => $recordA['STREETNO_PUROKNO'],
+                            'BARANGAY' => $recordA['BARANGAY'],
+                            'CITYMUNICIPALITY' => $recordA['CITYMUNICIPALITY'],
+                            'DISTRICT' => $recordA['DISTRICT'],
+                            'PROVINCE' => $recordA['PROVINCE'],
+                            'REGION' => $recordA['REGION'],
+                            'duplicates' => $similarRecords
+                        ];
+                    }
+                }
+            }
+        });
+
+    return response()->json($duplicates); // Return the duplicates as a JSON response
+}
 
 }

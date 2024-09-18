@@ -32,5 +32,7 @@ Route::middleware('api')->group(function () {
     Route::get('/getUnmatchData', [DataProfilingController::class, 'getUnmatchData']);
     Route::get('/getMatchData', [DataProfilingController::class, 'getMatchData']);
     Route::get('/exportUnmatch', [DataProfilingController::class, 'exportUnmatch']);
+    Route::get('/getDuplicateDataStaging', [DataProfilingController::class, 'getDuplicateDataStaging']);
+    Route::get('/findDuplicates', [DataProfilingController::class, 'findDuplicates']);
 
 });

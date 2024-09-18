@@ -103,39 +103,39 @@
     </div>
     <div v-else-if="activeTab === 'total'"
         class="flex flex-col items-start h-auto p-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-            <div style="width:1500px; overflow-x: auto;">
-                <table id="example"
-                    class="border-t min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th class="px-4 py-2 w-32">RSBSA #</th>
-                            <th class="px-4 py-2">First Name</th>
-                            <th class="px-4 py-2">Middle Name</th>
-                            <th class="px-4 py-2">Last Name</th>
-                            <th class="px-4 py-2">Extension Name</th>
-                            <th class="px-4 py-2">ID Number</th>
-                            <th class="px-4 py-2">Government ID Type</th>
-                            <th class="px-4 py-2">Street No. / Purok No.</th>
-                            <th class="px-4 py-2">Barangay</th>
-                            <th class="px-4 py-2">City/Municipality</th>
-                            <th class="px-4 py-2">District</th>
-                            <th class="px-4 py-2">Province</th>
-                            <th class="px-4 py-2">Region</th>
-                            <th class="px-4 py-2">Birth Date</th>
-                            <th class="px-4 py-2">Place of Birth</th>
-                            <th class="px-4 py-2">Mobile No.</th>
-                            <th class="px-4 py-2">Sex</th>
-                            <th class="px-4 py-2">Nationality</th>
-                            <th class="px-4 py-2">Profession</th>
-                            <th class="px-4 py-2">Source of Funds</th>
-                            <th class="px-4 py-2">Mother Mainden Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Table content -->
-                    </tbody>
-                </table>
-            </div>
+        <div style="width:1500px; overflow-x: auto;">
+            <table id="example"
+                class="border-t min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                        <th class="px-4 py-2 w-32">RSBSA #</th>
+                        <th class="px-4 py-2">First Name</th>
+                        <th class="px-4 py-2">Middle Name</th>
+                        <th class="px-4 py-2">Last Name</th>
+                        <th class="px-4 py-2">Extension Name</th>
+                        <th class="px-4 py-2">ID Number</th>
+                        <th class="px-4 py-2">Government ID Type</th>
+                        <th class="px-4 py-2">Street No. / Purok No.</th>
+                        <th class="px-4 py-2">Barangay</th>
+                        <th class="px-4 py-2">City/Municipality</th>
+                        <th class="px-4 py-2">District</th>
+                        <th class="px-4 py-2">Province</th>
+                        <th class="px-4 py-2">Region</th>
+                        <th class="px-4 py-2">Birth Date</th>
+                        <th class="px-4 py-2">Place of Birth</th>
+                        <th class="px-4 py-2">Mobile No.</th>
+                        <th class="px-4 py-2">Sex</th>
+                        <th class="px-4 py-2">Nationality</th>
+                        <th class="px-4 py-2">Profession</th>
+                        <th class="px-4 py-2">Source of Funds</th>
+                        <th class="px-4 py-2">Mother Mainden Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table content -->
+                </tbody>
+            </table>
+        </div>
 
     </div>
     <div v-else-if="activeTab === 'invalid'"
@@ -203,13 +203,13 @@
                     <div v-if="isDropdownOpen"
                         class="absolute right-0 z-10 mt-2 w-44 bg-white rounded-lg shadow divide-y divide-gray-100 dark:bg-gray-700">
                         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                            <li>
+                            <!-- <li>
                                 <a @click="exportmatch" href="#"
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export
                                     Matched Data</a>
-                            </li>
+                            </li> -->
                             <li>
-                                <a @click="ëxportUnmatch"
+                                <a @click="exportUnmatch()"
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export
                                     Unmatched Data</a>
                             </li>
@@ -237,7 +237,6 @@
                         <span class="text-xl font-bold">{{ totalRecords }}</span>
                         <div class="flex items-center justify-between">
                             <span class="text-gray-500">Total No. of Records</span>
-                            <span class="text-green-500 text-sm font-semibold ml-2">as of Sept 2024</span>
                         </div>
                     </div>
                 </div>
@@ -257,7 +256,6 @@
                         <span class="text-xl font-bold">{{ totalmatchData }}</span>
                         <div class="flex items-center justify-between">
                             <span class="text-gray-500">Total Match Data</span>
-                            <span class="text-red-500 text-sm font-semibold ml-2">as of Sept 2024</span>
                         </div>
                     </div>
                 </div>
@@ -276,7 +274,6 @@
                         <span class="text-xl font-bold">{{ totalUnmatchData }}</span>
                         <div class="flex items-center justify-between">
                             <span class="text-gray-500">Total No. of Unmatch Data</span>
-                            <span class="text-green-500 text-sm font-semibold ml-2">as of Sept 2024</span>
                         </div>
                     </div>
                 </div>
@@ -355,7 +352,7 @@
                                 <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
                             </a>
 
-                            <a v-for="page in visiblePages" :key="page" href="#" @click.prevent="changePage(page)"
+                            <a v-for="page in visiblePagesMatch" :key="page" href="#" @click.prevent="changePage(page)"
                                 :class="{ 'z-10 bg-indigo-600 text-white': currentMatchPage === page }"
                                 class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
                                 {{ page }}
@@ -444,7 +441,7 @@
                                 <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
                             </a>
 
-                            <a v-for="page in visiblePages" :key="page" href="#"
+                            <a v-for="page in visiblePagesUnmatch" :key="page" href="#"
                                 @click.prevent="changeUnmatchPage(page)"
                                 :class="{ 'z-10 bg-indigo-600 text-white': currentPage === page }"
                                 class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
@@ -471,55 +468,10 @@
     <div v-else-if="activeTab === 'duplicate'"
         class="w-full h-auto p-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <div class="relative overflow-x-auto">
-            <div class="flex justify-start space-x-2">
-                <button type="button" @click="checkDataDuplication"
-                    class="flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                    Run Data Duplication
-                </button>
-
-                <div class="relative inline-block text-left">
-                    <!-- Main Button with dropdown icon -->
-                    <button type="button"
-                        class="inline-flex items-center text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-l-full text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-6 mr-2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M7.5 7.5h-.75A2.25 2.25 0 0 0 4.5 9.75v7.5a2.25 2.25 0 0 0 2.25 2.25h7.5a2.25 2.25 0 0 0 2.25-2.25v-7.5a2.25 2.25 0 0 0-2.25-2.25h-.75m-6 3.75 3 3m0 0 3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-7.5a2.25 2.25 0 0 1-2.25-2.25v-.75" />
-                        </svg>
-                        Download
-                    </button>
-
-                    <!-- Dropdown toggle button -->
-                    <button @click="toggleDropdown"
-                        class="inline-flex items-center px-3 py-2.5 text-white bg-green-700 hover:bg-green-800 rounded-r-full focus:outline-none dark:bg-green-600 dark:hover:bg-green-700">
-                        <svg class="w-4 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 10 6">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M1 1l4 4 4-4" />
-                        </svg>
-                    </button>
-
-                    <!-- Dropdown menu -->
-                    <div v-if="isDropdownOpen"
-                        class="absolute right-0 z-10 mt-2 w-44 bg-white rounded-lg shadow divide-y divide-gray-100 dark:bg-gray-700">
-                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                            <li>
-                                <a  href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export
-                                    Data Duplication</a>
-                            </li>
-                        
-                        </ul>
-                    </div>
-                </div>
 
 
-            </div>
-            <!-- https://codepen.io/robstinson/pen/MWexYPG -->
-            <!-- Component Start -->
-            <div class="grid lg:grid-cols-2 md:grid-cols-2 gap-6 w-full  mt-4">
+            <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-6 w-full  mt-4">
 
-                <!-- Tile 1 -->
                 <div class="flex items-center p-4 bg-gray-100 rounded">
                     <div class="flex flex-shrink-0 items-center justify-center bg-green-200 h-16 w-16 rounded">
 
@@ -534,10 +486,35 @@
                         <div class="flex items-center justify-between">
                             <span class="text-gray-500">Total No. of Records</span>
                         </div>
+                        <button type="button"
+                            class="text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-xs px-2 py-1.5 text-center me-2 mb-2">View
+                            more</button>
+
                     </div>
                 </div>
 
-                <!-- Tile 2 -->
+                <div class="flex items-center p-4 bg-gray-100 rounded">
+                    <div class="flex flex-shrink-0 items-center justify-center bg-green-200 h-16 w-16 rounded">
+
+                        <svg class="w-6 h-6 fill-current text-green-700" xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 576 512">
+                            <path
+                                d="M96 80c0-26.5 21.5-48 48-48l288 0c26.5 0 48 21.5 48 48l0 304L96 384 96 80zm313 47c-9.4-9.4-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L409 161c9.4-9.4 9.4-24.6 0-33.9zM0 336c0-26.5 21.5-48 48-48l16 0 0 128 448 0 0-128 16 0c26.5 0 48 21.5 48 48l0 96c0 26.5-21.5 48-48 48L48 480c-26.5 0-48-21.5-48-48l0-96z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="flex-grow flex flex-col ml-4">
+                        <span class="text-xl font-bold">{{ totalDuplicateData_staging }}</span>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500">Total Duplicate Data on Staging</span>
+                        </div>
+                        <button type="button"
+                            class="text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-xs px-2 py-1.5 text-center me-2 mb-2">View
+                            more</button>
+
+                    </div>
+                </div>
+
                 <div class="flex items-center p-4 bg-gray-100 rounded">
                     <div class="flex flex-shrink-0 items-center justify-center bg-green-200 h-16 w-16 rounded">
 
@@ -551,19 +528,87 @@
                     <div class="flex-grow flex flex-col ml-4">
                         <span class="text-xl font-bold">{{ totalmatchData }}</span>
                         <div class="flex items-center justify-between">
-                            <span class="text-gray-500">Total Duplicate Data</span>
+                            <span class="text-gray-500">Total Duplicate Data on Server</span>
                         </div>
+                        <button type="button"
+                            class="text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-xs px-2 py-1.5 text-center me-2 mb-2">View
+                            more</button>
                     </div>
                 </div>
 
-            
+
+
             </div>
-          
-            <!-- unmatch data -->
+
+            <!-- duplicate data -->
             <div style="overflow-x: auto; max-width: 100%;">
-                <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-                    
-                    <table class="border-t w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <div class="relative shadow-md sm:rounded-lg p-5">
+                    <table border=1 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 striped-table">
+                        <thead>
+                            <tr>
+                                <th class="text-left">RSBSA Number</th>
+                                <th class="text-left">First Name</th>
+                                <th class="text-left">Middle Name</th>
+                                <th class="text-left">Last Name</th>
+                                <th class="text-left">Sex</th>
+                                <th class="text-left">Birthdate</th>
+                                <th class="text-left">Street/Purok No.</th>
+                                <th class="text-left">Barangay</th>
+                                <th class="text-left">City/Municipality</th>
+                                <th class="text-left">District</th>
+                                <th class="text-left">Province</th>
+                                <th class="text-left">Region</th>
+                                <th class="text-left">Duplicate(s)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(duplicate, index) in paginatedDuplicateStagingData" :key="index"
+                                :class="{ 'bg-gray-100': index % 2 === 0, 'bg-white': index % 2 !== 0 }">
+                                <!-- Display the main record -->
+                                <td>{{ duplicate.RSBSASYSTEMGENERATEDNUMBER }}</td>
+                                <td>{{ duplicate.FIRSTNAME }}</td>
+                                <td>{{ duplicate.MIDDLENAME }}</td>
+                                <td>{{ duplicate.LASTNAME }}</td>
+                                <td>{{ duplicate.SEX }}</td>
+                                <td>{{ duplicate.BIRTHDATE }}</td>
+                                <td>{{ duplicate.STREETNO_PUROKNO }}</td>
+                                <td>{{ duplicate.BARANGAY }}</td>
+                                <td>{{ duplicate.CITYMUNICIPALITY }}</td>
+                                <td>{{ duplicate.DISTRICT }}</td>
+                                <td>{{ duplicate.PROVINCE }}</td>
+                                <td>{{ duplicate.REGION }}</td>
+
+                                <!-- Display all duplicates dynamically -->
+                                <td>
+                                    <ul>
+                                        <li v-for="(item, duplicateIndex) in duplicate.duplicates"
+                                            :key="duplicateIndex">
+                                            <p>Name: <span
+                                                    class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                                                    {{ item.FIRSTNAME }} {{ item.MIDDLENAME }} {{ item.LASTNAME
+                                                    }}</span>
+                                            </p>
+                                            <p>Sex: <span
+                                                    class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                                                    {{ item.SEX }}</span>
+                                            </p>
+                                            <p>Birthdate: <span
+                                                    class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                                                    {{ item.BIRTHDATE }} </span>
+                                            </p>
+                                            <p>Similarity: <span
+                                                    class="bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">
+                                                    {{ item.similarity }}</span>
+                                            </p>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                    <!-- <table class="border-t w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th class="px-4 py-2 w-32">RSBSA #</th>
@@ -580,7 +625,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="item in paginatedData" :key="item.id" class="bg-white dark:bg-gray-800 border-b">
+                            <tr v-for="item in paginatedDuplicateStagingData" :key="item.id"
+                                class="bg-white dark:bg-gray-800 border-b">
                                 <td class="px-4 py-2">{{ item.RSBSASYSTEMGENERATEDNUMBER }}</td>
                                 <td class="px-4 py-2">{{ item.FIRSTNAME }}</td>
                                 <td class="px-4 py-2">{{ item.LASTNAME }}</td>
@@ -594,19 +640,19 @@
                                 <td class="px-4 py-2">{{ item.CITYMUNICIPALITY }}</td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table> -->
                 </div>
 
                 <!-- Pagination controls -->
                 <div class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6">
                     <div class="flex flex-1 justify-between sm:hidden">
-                        <a href="#" @click.prevent="changeUnmatchPage(currentPage - 1)"
-                            :class="{ 'cursor-not-allowed opacity-50': currentPage === 1 }"
+                        <a href="#" @click.prevent="changeDuplicateStagingPage(currentDuplicateStagingPage - 1)"
+                            :class="{ 'cursor-not-allowed opacity-50': currentDuplicateStagingPage === 1 }"
                             class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
                             Previous
                         </a>
-                        <a href="#" @click.prevent="changeUnmatchPage(currentPage + 1)"
-                            :class="{ 'cursor-not-allowed opacity-50': currentPage === totalPages }"
+                        <a href="#" @click.prevent="changeDuplicateStagingPage(currentDuplicateStagingPage + 1)"
+                            :class="{ 'cursor-not-allowed opacity-50': currentDuplicateStagingPage === totalPages }"
                             class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
                             Next
                         </a>
@@ -616,36 +662,41 @@
                         <div>
                             <p class="text-sm text-gray-700">
                                 Showing
-                                <span class="font-medium">{{ start }}</span>
+                                <span class="font-medium">{{ startDuplicate_staging }}</span>
                                 to
-                                <span class="font-medium">{{ end }}</span>
+                                <span class="font-medium">{{ endDuplicate_staging }}</span>
                                 of
-                                <span class="font-medium">{{ totalUnmatchData }}</span>
+                                <span class="font-medium">{{ totalDuplicateData_staging }}</span>
                                 results
                             </p>
                         </div>
                         <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                            <a href="#" @click.prevent="changeUnmatchPage(currentPage - 1)"
-                                :class="{ 'cursor-not-allowed opacity-50': currentPage === 1 }"
+                            <!-- Previous Button -->
+                            <a href="#" @click.prevent="changeDuplicateStagingPage(currentDuplicateStagingPage - 1)"
+                                :class="{ 'cursor-not-allowed opacity-50': currentDuplicateStagingPage === 1 }"
                                 class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
                                 <span class="sr-only">Previous</span>
                                 <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
                             </a>
 
-                            <a v-for="page in visiblePages" :key="page" href="#"
-                                @click.prevent="changeUnmatchPage(page)"
-                                :class="{ 'z-10 bg-indigo-600 text-white': currentPage === page }"
+                            <!-- Page Numbers -->
+                            <a v-for="page in visiblePagesDuplicateStaging" :key="page" href="#"
+                                @click.prevent="changeDuplicateStagingPage(page)"
+                                :class="{ 'z-10 bg-indigo-600 text-white': currentDuplicateStagingPage === page }"
                                 class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
                                 {{ page }}
                             </a>
 
-                            <a href="#" @click.prevent="changeUnmatchPage(currentPage + 1)"
-                                :class="{ 'cursor-not-allowed opacity-50': currentPage === totalPages }"
+                            <!-- Next Button -->
+                            <a href="#" @click.prevent="changeDuplicateStagingPage(currentDuplicateStagingPage + 1)"
+                                :class="{ 'cursor-not-allowed opacity-50': currentDuplicateStagingPage === totalDuplicateStagingPages }"
                                 class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
                                 <span class="sr-only">Next</span>
                                 <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
                             </a>
                         </nav>
+
+
                     </div>
                 </div>
             </div>
@@ -658,7 +709,6 @@
     </div>
 
 </template>
-
 
 <script>
 import axios from 'axios';
@@ -679,88 +729,148 @@ export default {
             activeTab: 'total',
             currentPage: 1,
             currentMatchPage: 1,
+            currentDuplicateStagingPage: 1,
             itemsPerPage: 5,
             itemsUnmatchPerPage: 5,
-
-            unmatched_data: [], // Define `unmatched_data`
-            matched_data: [],   // Define `matched_data`
-
+            unmatched_data: [],
+            matched_data: [],
+            duplicate_data: [],
+            duplicates: [],
             totalmatchData: 0,
             totalUnmatchData: 0,
-
-            visiblePages: [],
+            totalDuplicateData_staging: 0,
+            totalDuplicateData_farmersdb: 0,
+            visiblePagesUnmatch: [],
+            visiblePagesMatch: [],
+            visiblePagesDuplicateStaging: [],
             isDropdownOpen: false,
-
         };
     },
     computed: {
+
         totalPages() {
             return Math.ceil(this.totalUnmatchData / this.itemsUnmatchPerPage);
         },
+
         totalMatchPages() {
             return Math.ceil(this.totalmatchData / this.itemsPerPage);
         },
+
+        totalDuplicateStagingPages() {
+            return Math.ceil(100 / this.itemsPerPage);
+        },
+
+
         start() {
             return (this.currentPage - 1) * this.itemsUnmatchPerPage + 1;
         },
+
         startMatch() {
             return (this.currentMatchPage - 1) * this.itemsPerPage + 1;
         },
+
+        startDuplicate_staging() {
+            return (this.currentDuplicateStagingPage - 1) * this.itemsPerPage + 1;
+        },
+
         end() {
             return Math.min(this.currentPage * this.itemsPerPage, this.totalUnmatchData);
         },
+
         endMatch() {
             return Math.min(this.currentMatchPage * this.itemsPerPage, this.totalmatchData);
+        },
+
+        endDuplicate_staging() {
+            return Math.min(this.currentDuplicateStagingPage * this.itemsPerPage, this.totalDuplicateData_staging);
         },
 
         paginatedData() {
             const start = (this.currentPage - 1) * this.itemsPerPage;
             return this.unmatched_data.slice(start, start + this.itemsPerPage);
         },
+
         paginatedMatchData() {
             const start = (this.currentMatchPage - 1) * this.itemsPerPage;
             return this.matched_data.slice(start, start + this.itemsPerPage);
+        },
+
+        paginatedDuplicateStagingData() {
+            const start = (this.currentDuplicateStagingPage - 1) * this.itemsPerPage;
+            return this.duplicates.slice(start, start + this.itemsPerPage);
         }
+
     },
+
     methods: {
         async initDataTable() {
             try {
-                // Fetch data from the API
                 const response = await axios.get('api/getUnmatchData');
                 const data = response.data;
                 this.unmatched_data = data.data;
                 this.totalUnmatchData = data.count;
 
-                // Check if there are records
                 if (data.count === 0) {
                     console.error('No records found.');
                     return;
                 }
 
-                this.calculateVisiblePages();
+                this.calculateVisiblePagesUnmatch();
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             }
         },
+        async duplicateDataStaging() {
+            try {
+                const response = await axios.get('api/getDuplicateDataStaging');
+                const data = response.data;
+                this.duplicate_data = data.data;
+
+                if (data.count === 0) {
+                    console.error('No records found.');
+                    return;
+                }
+
+                this.calculateVisiblePagesDuplicateStaging();
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+            }
+        },
+        async getDuplicateDataFarmersReg() {
+            try {
+                const response = await axios.get('api/findDuplicates');
+                const data = response.data;
+                this.duplicates = response.data;
+                this.totalDuplicateData_staging = data.length;
+
+                if (data.count === 0) {
+                    console.error('No records found.');
+                    return;
+                }
+
+                this.calculateVisiblePagesUnmatch();
+            } catch (error) {
+                console.error('Failed to fetch data:', error);
+            }
+        },
+
         toggleDropdown() {
             this.isDropdownOpen = !this.isDropdownOpen;
         },
 
         async initMatchDataTable() {
             try {
-                // Fetch data from the API
                 const response = await axios.get('api/getMatchData');
                 const data = response.data;
                 this.matched_data = data.data;
                 this.totalmatchData = data.count;
 
-                // Check if there are records
                 if (data.count === 0) {
                     console.error('No records found.');
                     return;
                 }
 
-                this.calculateVisiblePages();
+                this.calculateVisiblePagesMatch();
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             }
@@ -769,22 +879,38 @@ export default {
         changePage(page) {
             if (page >= 1 && page <= this.totalMatchPages) {
                 this.currentMatchPage = page;
-                this.calculateMatchVisiblePages();
+                this.calculateVisiblePagesMatch();
             }
         },
 
         changeUnmatchPage(page) {
             if (page >= 1 && page <= this.totalPages) {
                 this.currentPage = page;
-                this.calculateVisiblePages();
+                this.calculateVisiblePagesUnmatch();
             }
         },
 
-        calculateVisiblePages() {
-            const pages = [];
-            const totalPages = this.totalPages;
-            const currentPage = this.currentPage;
+        changeDuplicateStagingPage(page) {
+            if (page >= 1 && page <= this.totalDuplicateStagingPages) {
+                this.currentDuplicateStagingPage = page;
+                this.calculateVisiblePagesDuplicateStaging();
+            }
+        },
 
+        calculateVisiblePagesUnmatch() {
+            this.visiblePagesUnmatch = this.getVisiblePages(this.totalPages, this.currentPage);
+        },
+
+        calculateVisiblePagesMatch() {
+            this.visiblePagesMatch = this.getVisiblePages(this.totalMatchPages, this.currentMatchPage);
+        },
+
+        calculateVisiblePagesDuplicateStaging() {
+            this.visiblePagesDuplicateStaging = this.getVisiblePages(this.totalDuplicateStagingPages, this.currentDuplicateStagingPage);
+        },
+
+        getVisiblePages(totalPages, currentPage) {
+            const pages = [];
             let startPage = Math.max(1, currentPage - 2);
             let endPage = Math.min(totalPages, currentPage + 2);
 
@@ -798,44 +924,23 @@ export default {
                 pages.push(page);
             }
 
-            this.visiblePages = pages;
-        },
-
-        calculateMatchVisiblePages() {
-            const pages = [];
-            const totalPages = this.totalMatchPages;
-            const currentPage = this.currentMatchPage;
-
-            let startPage = Math.max(1, currentPage - 2);
-            let endPage = Math.min(totalPages, currentPage + 2);
-
-            if (currentPage <= 3) {
-                endPage = Math.min(5, totalPages);
-            } else if (currentPage >= totalPages - 2) {
-                startPage = Math.max(1, totalPages - 4);
-            }
-
-            for (let page = startPage; page <= endPage; page++) {
-                pages.push(page);
-            }
-
-            this.visiblePages = pages;
+            return pages;
         },
 
         setActiveTab(tab) {
             this.activeTab = tab;
         },
 
-        async ëxportUnmatch() {
+        async exportUnmatch() {
             try {
                 const response = await axios.get('api/exportUnmatch', {
-                    responseType: 'blob', // If the response is a file download
+                    responseType: 'blob',
                 });
-                // Create a downloadable link for the file
+
                 const url = window.URL.createObjectURL(new Blob([response.data]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'unmatched_data.csv'); // Specify the file name
+                link.setAttribute('download', 'unmatched_data.csv');
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -844,15 +949,19 @@ export default {
             } catch (error) {
                 console.error('Error exporting data:', error);
             }
-
         }
+
     },
+
     mounted() {
-        this.initDataTable();
-        this.initMatchDataTable();
+
+        console.log("Visible Pages Duplicate Staging:", this.visiblePagesDuplicateStaging);
+
+        Promise.all([this.initDataTable(), this.initMatchDataTable(), this.duplicateDataStaging(), this.getDuplicateDataFarmersReg()]);
     }
 };
 </script>
+
 
 <style>
 /* Add any styles needed for pagination controls and tabs */
@@ -880,5 +989,16 @@ table {
 /* Make the table responsive by adding horizontal scrolling */
 .overflow-x-auto {
     overflow-x: auto;
+}
+
+
+.striped-table tbody tr:nth-child(even) {
+    background-color: #f9fafb;
+    /* Light gray for even rows */
+}
+
+.striped-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+    /* White for odd rows */
 }
 </style>
