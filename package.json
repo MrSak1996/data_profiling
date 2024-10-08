@@ -28,6 +28,7 @@
         "datatables.net-vue3": "^3.0.2",
         "flowbite": "^2.5.1",
         "jquery": "^3.7.1",
+        "vue-apexcharts": "^1.6.2",
         "vue-router": "^4.0.13"
     }
 }

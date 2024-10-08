@@ -5,17 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class InvalidDataModel extends Model
+class FileUploadModel extends Model
 {
     use HasFactory;
-    protected $table = 'dp_onbint_invalid';
+    protected $table = 'file_uploaded';
 
     protected $fillable = [
         'id',
-        'file_id',
-        'filename',
-        'column_name',
-        'invalid_data',
-        'updated_at'
+        'file_name',
+        'uploaded_by',
+        'updated_by',
+        'created_by'
     ];
 }

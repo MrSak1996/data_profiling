@@ -13,8 +13,8 @@ class OnbintModel extends Model
 
     protected $table = 'dp_onbint_staging';
 
-    protected $fillable = [ 
-        'ID',
+    protected $fillable = [
+        'FILE_ID',
         'RSBSASYSTEMGENERATEDNUMBER',
         'FIRSTNAME',
         'MIDDLENAME',

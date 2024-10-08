@@ -1,20 +1,24 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Dashboard from '../components/Dashboard.vue';
 import DefaultLayout from '../components/DefaultLayout.vue'; 
-import sample from '../components/ExampleComponent.vue';
-// import Login from '../views/Login.vue'; 
+import Login from '../components/Login.vue';
+import Profile from '../components/user-management/profile.vue';
+import UserAccounts from '../components/user-management/user-accounts.vue';
+import CreateUser from '../components/user-management/create-user.vue';
 const routes = [
 
     {
         path: '/',
-        redirect: '/dashboard',
+        redirect: '/login-page',
         component: DefaultLayout,
         children:[
             { path:'/dashboard', name: 'Dashboard',component:Dashboard},
-            { path:'/sample', name: 'Sample',component:sample},
-            // { path: '/login', name: 'Login', component: Login },
+            { path:'/login-page', name: 'Login',component:Login},
+            { path:'/profile', name: 'profile',component:Profile},
+            { path:'/user-accounts', name: 'user-accounts',component:UserAccounts},
+            { path:'/create-user', name: 'create-user',component:CreateUser},
         ]
-    },
+    }
    
 
 ]

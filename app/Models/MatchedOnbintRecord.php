@@ -14,7 +14,6 @@ class MatchedOnbintRecord extends Model
     protected $table = 'dp_onbint_matched';
 
     protected $fillable = [
-        'ID', 
         'RSBSASYSTEMGENERATEDNUMBER', 
         'FIRSTNAME', 
         'MIDDLENAME', 

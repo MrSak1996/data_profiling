@@ -70,6 +70,8 @@
     </div>
     <div v-if="activeTab === 'upload'"
         class="flex flex-col items-start h-auto p-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <ProgressBar ref="progressBar" />
+
         <form @submit.prevent="saveExcelData" ref="mainForm" enctype="multipart/form-data"
             class="flex flex-col items-center w-full space-y-4">
             <div class="flex items-center justify-center w-full">
@@ -94,7 +96,7 @@
                 </label>
             </div>
             <div class="flex justify-end w-full">
-                <button type="submit" name="upload" @click.prevent="saveExcelData"
+                <button type="submit" name="upload"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Upload File
                 </button>
@@ -103,9 +105,14 @@
     </div>
     <div v-else-if="activeTab === 'total'"
         class="flex flex-col items-start h-auto p-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-        <div style="width:1500px; overflow-x: auto;">
-            <table id="example"
-                class="border-t min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <button type="button" @click="getOnbintStaging"
+            class="flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            Show Data
+        </button>
+        <ProgressBar ref="progressBar" />
+
+        <div>
+            <table id="example" class="border-t text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th class="px-4 py-2 w-32">RSBSA #</th>
@@ -138,42 +145,17 @@
         </div>
 
     </div>
-    <div v-else-if="activeTab === 'invalid'"
-        class="w-full h-auto p-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-        <div class="relative overflow-x-auto">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-900 uppercase bg-blue-100 dark:bg-blue-700 dark:text-blue-400">
-                    <tr>
-                        <th scope="col" class="px-3 py-3 rounded-s-lg">File Name</th>
-                        <th scope="col" class="px-3 py-3">Null Values</th>
-                        <th scope="col" class="px-3 py-3">Below 2 Characters</th>
-                        <th scope="col" class="px-3 py-3">Unwanted Characters</th>
-                        <th scope="col" class="px-3 py-3">Invalid Date Format</th>
-                        <th scope="col" class="px-3 py-3">String with Special Characters</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Iterate through the invalid_data prop to display data -->
-                    <tr v-for="item in invalid_data" :key="item.id" class="bg-white dark:bg-gray-800">
-                        <td class="px-3 py-4">{{ item.filename }}</td>
-                        <td class="px-3 py-4">{{ item.null_values }}</td>
-                        <td class="px-3 py-4">{{ item.below_2letters }}</td>
-                        <td class="px-3 py-4">{{ item.unwanted_char }}</td>
-                        <td class="px-3 py-4">{{ item.date_format }}</td>
-                        <td class="px-3 py-4">{{ item.specialchar }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+   
     <div v-else-if="activeTab === 'unmatched'"
         class="w-full h-auto p-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <div class="relative overflow-x-auto">
             <div class="flex justify-start space-x-2">
-                <button type="button" @click="checkDataMatches"
+                <button type="button" @click="initMatchDataTable"
                     class="flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     Run Data Matches
                 </button>
+                <ProgressBar ref="progressBar" />
+
 
 
 
@@ -211,7 +193,7 @@
                             <li>
                                 <a @click="exportUnmatch()"
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Export
-                                    Unmatched Data</a>
+                                    Matched Data</a>
                             </li>
                         </ul>
                     </div>
@@ -285,7 +267,7 @@
                     <table class="border-t w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th class="px-4 py-2 w-32">RSBS Number</th>
+                                <th class="px-4 py-2 w-32">RSBSA Number</th>
                                 <th class="px-4 py-2">First Name</th>
                                 <th class="px-4 py-2">Last Name</th>
                                 <th class="px-4 py-2">Middle Name</th>
@@ -294,24 +276,33 @@
                                 <th class="px-4 py-2">Birthdate</th>
                                 <th class="px-4 py-2 w-32">Place of Birth</th>
                                 <th class="px-4 py-2">Mobile No</th>
+                                <th class="px-4 py-2">Street No./ Purok No.</th>
                                 <th class="px-4 py-2">Barangay</th>
                                 <th class="px-4 py-2">City/Municipality</th>
+                                <th class="px-4 py-2">District</th>
+                                <th class="px-4 py-2">Province</th>
+                                <th class="px-4 py-2">Region</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- <tr v-for="item in paginatedMatchData" :key="item.id" -->
                             <tr v-for="item in paginatedMatchData" :key="item.id"
                                 class="bg-white dark:bg-gray-800 border-b">
-                                <td class="px-4 py-2">{{ item.RSBSASYSTEMGENERATEDNUMBER }}</td>
-                                <td class="px-4 py-2">{{ item.FIRSTNAME }}</td>
-                                <td class="px-4 py-2">{{ item.LASTNAME }}</td>
-                                <td class="px-4 py-2">{{ item.MIDDLENAME }}</td>
-                                <td class="px-4 py-2">{{ item.MOTHERMAIDENNAME }}</td>
-                                <td class="px-4 py-2">{{ item.SEX }}</td>
-                                <td class="px-4 py-2">{{ item.BIRTHDATE }}</td>
+                                <td class="px-4 py-2">{{ item.rsbsa_no }}</td>
+                                <td class="px-4 py-2">{{ item.first_name }}</td>
+                                <td class="px-4 py-2">{{ item.last_name }}</td>
+                                <td class="px-4 py-2">{{ item.middle_name }}</td>
+                                <td class="px-4 py-2">{{ item.mm_name }}</td>
+                                <td class="px-4 py-2">{{ item.sex }}</td>
+                                <td class="px-4 py-2">{{ item.birth_date }}</td>
                                 <td class="px-4 py-2">{{ item.PLACEOFBIRTH }}</td>
-                                <td class="px-4 py-2">{{ item.MOBILENO }}</td>
-                                <td class="px-4 py-2">{{ item.BARANGAY }}</td>
-                                <td class="px-4 py-2">{{ item.CITYMUNICIPALITY }}</td>
+                                <td class="px-4 py-2">{{ item.mobile_no }}</td>
+                                <td class="px-4 py-2">{{ item.streetno }}</td>
+                                <td class="px-4 py-2">{{ item.brgy }}</td>
+                                <td class="px-4 py-2">{{ item.cm }}</td>
+                                <td class="px-4 py-2">{{ item.district }}</td>
+                                <td class="px-4 py-2">{{ item.province }}</td>
+                                <td class="px-4 py-2">{{ item.REGION }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -375,7 +366,7 @@
                     <table class="border-t w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
-                                <th class="px-4 py-2 w-32">RSBS Number</th>
+                                <th class="px-4 py-2 w-32">RSBSA Number</th>
                                 <th class="px-4 py-2">First Name</th>
                                 <th class="px-4 py-2">Last Name</th>
                                 <th class="px-4 py-2">Middle Name</th>
@@ -384,8 +375,12 @@
                                 <th class="px-4 py-2">Birthdate</th>
                                 <th class="px-4 py-2 w-32">Place of Birth</th>
                                 <th class="px-4 py-2">Mobile No</th>
+                                <th class="px-4 py-2">Street No./ Purok No.</th>
                                 <th class="px-4 py-2">Barangay</th>
                                 <th class="px-4 py-2">City/Municipality</th>
+                                <th class="px-4 py-2">District</th>
+                                <th class="px-4 py-2">Province</th>
+                                <th class="px-4 py-2">Region</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -399,8 +394,12 @@
                                 <td class="px-4 py-2">{{ item.BIRTHDATE }}</td>
                                 <td class="px-4 py-2">{{ item.PLACEOFBIRTH }}</td>
                                 <td class="px-4 py-2">{{ item.MOBILENO }}</td>
+                                <td class="px-4 py-2">{{ item.STREETNO_PUROKNO }}</td>
                                 <td class="px-4 py-2">{{ item.BARANGAY }}</td>
                                 <td class="px-4 py-2">{{ item.CITYMUNICIPALITY }}</td>
+                                <td class="px-4 py-2">{{ item.DISTRICT }}</td>
+                                <td class="px-4 py-2">{{ item.PROVINCE }}</td>
+                                <td class="px-4 py-2">{{ item.REGION }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -468,11 +467,15 @@
     <div v-else-if="activeTab === 'duplicate'"
         class="w-full h-auto p-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <div class="relative overflow-x-auto">
-
+            <button type="button" @click="duplicateDataStaging"
+                class="flex items-center text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Run Data Duplication
+            </button>
 
             <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-6 w-full  mt-4">
 
                 <div class="flex items-center p-4 bg-gray-100 rounded">
+
                     <div class="flex flex-shrink-0 items-center justify-center bg-green-200 h-16 w-16 rounded">
 
                         <svg class="w-6 h-6 fill-current text-green-700" xmlns="http://www.w3.org/2000/svg"
@@ -542,9 +545,10 @@
 
             <!-- duplicate data -->
             <div style="overflow-x: auto; max-width: 100%;">
-                <div class="relative shadow-md sm:rounded-lg p-5">
-                    <table border=1 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 striped-table">
-                        <thead>
+                <div class="relative shadow-md sm:rounded-lg p-2">
+                    <table border="1"
+                        class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
+                        <thead class="text-sm text-gray-900 uppercase bg-blue-100 dark:bg-blue-700 dark:text-blue-400">
                             <tr>
                                 <th class="text-left">RSBSA Number</th>
                                 <th class="text-left">First Name</th>
@@ -563,7 +567,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(duplicate, index) in paginatedDuplicateStagingData" :key="index"
-                                :class="{ 'bg-gray-100': index % 2 === 0, 'bg-white': index % 2 !== 0 }">
+                                :class="index % 2 === 0 ? 'bg-gray-100' : 'bg-gray-300'">
                                 <!-- Display the main record -->
                                 <td>{{ duplicate.RSBSASYSTEMGENERATEDNUMBER }}</td>
                                 <td>{{ duplicate.FIRSTNAME }}</td>
@@ -606,41 +610,6 @@
                             </tr>
                         </tbody>
                     </table>
-
-
-                    <!-- <table class="border-t w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                            <tr>
-                                <th class="px-4 py-2 w-32">RSBSA #</th>
-                                <th class="px-4 py-2">First Name</th>
-                                <th class="px-4 py-2">Last Name</th>
-                                <th class="px-4 py-2">Middle Name</th>
-                                <th class="px-4 py-2 w-64">Mother Maiden Name</th>
-                                <th class="px-4 py-2">Sex</th>
-                                <th class="px-4 py-2">Birthdate</th>
-                                <th class="px-4 py-2 w-32">Place of Birth</th>
-                                <th class="px-4 py-2">Mobile No</th>
-                                <th class="px-4 py-2">Barangay</th>
-                                <th class="px-4 py-2">City/Municipality</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in paginatedDuplicateStagingData" :key="item.id"
-                                class="bg-white dark:bg-gray-800 border-b">
-                                <td class="px-4 py-2">{{ item.RSBSASYSTEMGENERATEDNUMBER }}</td>
-                                <td class="px-4 py-2">{{ item.FIRSTNAME }}</td>
-                                <td class="px-4 py-2">{{ item.LASTNAME }}</td>
-                                <td class="px-4 py-2">{{ item.MIDDLENAME }}</td>
-                                <td class="px-4 py-2">{{ item.MOTHERMAIDENNAME }}</td>
-                                <td class="px-4 py-2">{{ item.SEX }}</td>
-                                <td class="px-4 py-2">{{ item.BIRTHDATE }}</td>
-                                <td class="px-4 py-2">{{ item.PLACEOFBIRTH }}</td>
-                                <td class="px-4 py-2">{{ item.MOBILENO }}</td>
-                                <td class="px-4 py-2">{{ item.BARANGAY }}</td>
-                                <td class="px-4 py-2">{{ item.CITYMUNICIPALITY }}</td>
-                            </tr>
-                        </tbody>
-                    </table> -->
                 </div>
 
                 <!-- Pagination controls -->
@@ -712,26 +681,43 @@
 
 <script>
 import axios from 'axios';
+import ProgressBar from './progressBar.vue';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/20/solid';
 
 export default {
+
     props: {
-        invalid_data: Array,
+        invalidData: {
+            type: Object,
+            required: true,
+            default: 0
+        },
+        fetchOnbintInvalid: {
+            type: Object,
+            required: true,
+        },
         checkDataMatches: Function,
-        totalRecords: Number
+        totalRecords: Number,
+
+
     },
+
     components: {
+        ProgressBar,
         ChevronLeftIcon,
         ChevronRightIcon,
     },
     data() {
         return {
-            activeTab: 'total',
+            userId:null,
+            file: null,
+            activeTab: 'upload',
             currentPage: 1,
             currentMatchPage: 1,
             currentDuplicateStagingPage: 1,
-            itemsPerPage: 5,
-            itemsUnmatchPerPage: 5,
+            itemsPerPage: 1000,
+            itemsPerInvalidPage: 1000,
+            itemsUnmatchPerPage: 1000,
             unmatched_data: [],
             matched_data: [],
             duplicate_data: [],
@@ -744,10 +730,34 @@ export default {
             visiblePagesMatch: [],
             visiblePagesDuplicateStaging: [],
             isDropdownOpen: false,
+
+            invalidCurrentPage: 1,
+            invalidDataVisiblePages: [],
+
+
+
         };
     },
+    created() {
+        this.userId = localStorage.getItem('userId');
+    },
     computed: {
+        invalidTotalPages() {
+            return Math.ceil(this.invalidDataTotalRecords / this.itemsPerInvalidPage);
+        },
 
+        invalidStart() {
+            return (this.invalidCurrentPage - 1) * this.itemsPerInvalidPage + 1;
+        },
+
+        invalidEnd() {
+            return Math.min(this.invalidCurrentPage * this.itemsPerInvalidPage, this.invalidDataTotalRecords);
+        },
+
+        invalidDataPaginated() {
+            const start = (this.invalidCurrentPage - 1) * this.itemsPerInvalidPage;
+            return this.fetchOnbintInvalid.slice(start, start + this.itemsPerInvalidPage);
+        },
         totalPages() {
             return Math.ceil(this.totalUnmatchData / this.itemsUnmatchPerPage);
         },
@@ -803,39 +813,114 @@ export default {
     },
 
     methods: {
-        async initDataTable() {
-            try {
-                const response = await axios.get('api/getUnmatchData');
-                const data = response.data;
-                this.unmatched_data = data.data;
-                this.totalUnmatchData = data.count;
+        async saveExcelData() {
+            if (!this.file) {
+                alert("Please select a file.");
+                return;
+            }
 
-                if (data.count === 0) {
+            try {
+                this.$refs.progressBar.startProgress();
+                const formData = new FormData();
+                formData.append("file", this.file); // Make sure this.file is a valid file object
+                formData.append("filename", this.file.name);
+                formData.append('userId',this.userId);
+
+                const response = await axios.post("api/import_excel", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                    onUploadProgress: (progressEvent) => {
+                        if (progressEvent.lengthComputable) {
+                            const progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100);
+                            this.$refs.progressBar.setProgress(progress);
+                        }
+                    }
+                });
+
+                // Show the toast
+                const toast = document.getElementById('toast-success');
+                    if (toast) {
+                    console.log("Toast element found");
+                    toast.classList.remove('hidden');
+                    console.log("Toast is now visible");
+
+                    // Optionally hide the toast after 1 second
+                    setTimeout(() => {
+                        toast.classList.add('hidden');
+                        location.reload();
+                    }, 1000); // 1 second delay
+                } else {
+                    console.error("Toast element not found");
+                }
+                this.$refs.progressBar.completeProgress();
+
+            } catch (error) {
+                console.error("Error importing data:", error.response.data);
+                alert("An error occurred: " + error.response.data.message);
+            }
+        },
+
+        async checkValidation() {
+            try {
+                this.$refs.progressBar.startProgress();
+
+                const response = await axios.post("api/checkValidation", {
+                    onDownloadProgress: (progressEvent) => {
+                        if (progressEvent.lengthComputable) {
+                            const progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100);
+                            this.$refs.progressBar.setProgress(progress);
+                        }
+                    }
+                });
+                this.$refs.progressBar.completeProgress();
+
+            } catch (error) {
+                console.log('Failed to validate:', error);
+            }
+        },
+        async initMatchDataTable() {
+            try {
+                // Start progress
+                this.$refs.progressBar.startProgress();
+
+                const response = await axios.get('api/getMatchData', {
+                    // Track download progress
+                    onDownloadProgress: (progressEvent) => {
+                        if (progressEvent.lengthComputable) {
+                            // Calculate the percentage and update the progress bar
+                            const progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100);
+                            this.$refs.progressBar.setProgress(progress);
+                        }
+                    }
+                });
+
+                // Set matched data once the response is completed
+                this.matched_data = response.data.data;
+                this.totalmatchData = response.data.count;
+
+                this.unmatched_data = response.data.unmatched;
+                this.totalUnmatchData = response.data.countUnmatched;
+
+                // Ensure the progress bar reaches 100% when data retrieval is done
+                this.$refs.progressBar.completeProgress();
+
+                if (this.totalmatchData === 0) {
                     console.error('No records found.');
                     return;
                 }
 
-                this.calculateVisiblePagesUnmatch();
+                // Additional actions like pagination calculation and table initialization
+                this.calculateVisiblePagesMatch();
+
+
             } catch (error) {
+                // Complete the progress if there's an error
+                this.$refs.progressBar.completeProgress();
                 console.error('Failed to fetch data:', error);
             }
         },
-        async duplicateDataStaging() {
-            try {
-                const response = await axios.get('api/getDuplicateDataStaging');
-                const data = response.data;
-                this.duplicate_data = data.data;
-
-                if (data.count === 0) {
-                    console.error('No records found.');
-                    return;
-                }
-
-                this.calculateVisiblePagesDuplicateStaging();
-            } catch (error) {
-                console.error('Failed to fetch data:', error);
-            }
-        },
+       
         async getDuplicateDataFarmersReg() {
             try {
                 const response = await axios.get('api/findDuplicates');
@@ -853,29 +938,150 @@ export default {
                 console.error('Failed to fetch data:', error);
             }
         },
+        async getOnbintStaging() {
+            try {
+                this.$refs.progressBar.startProgress();
+                const response = await axios.get('api/getOnbintStaging', {
+                    onDownloadProgress: (progressEvent) => {
+                        if (progressEvent.lengthComputable) {
+                            const progress = Math.floor((progressEvent.loaded / progressEvent.total) * 100);
+                            this.$refs.progressBar.setProgress(progress);
+                        }
+                    }
+                });
+
+                const data = response.data;
+
+                // Arrays to hold valid and invalid rows
+                const validRows = [];
+                const invalidRows = [];
+
+                // Validate data fields before initializing DataTable
+                data.forEach((row) => {
+                    let isValidRow = true;
+
+                    // Iterate over each field and validate it
+                    Object.keys(row).forEach((field) => {
+                        if (!this.isValidField(field, row[field])) {
+                            // Mark the field as invalid by wrapping it in a span with a class
+                            row[field] = `<span class="invalid-field">${row[field]}</span>`;
+                            isValidRow = false; // Mark the row as invalid
+                        }
+                    });
+
+                    // Separate valid and invalid rows
+                    if (isValidRow) {
+                        validRows.push(row);
+                    } else {
+                        invalidRows.push(row);
+                    }
+                });
+
+                const sortedData = [...invalidRows, ...validRows];
+
+                if ($.fn.DataTable.isDataTable('#example')) {
+                    $('#example').DataTable().clear().destroy();
+                }
+                this.$refs.progressBar.completeProgress();
+
+                $('#example').DataTable({
+                    retrieve: true,
+                    data: sortedData,
+                    ordering: false,
+                    paging: true,
+                    pageLength: 10,
+                    columns: [
+                        { data: 'RSBSASYSTEMGENERATEDNUMBER' },
+                        { data: 'FIRSTNAME' },
+                        { data: 'MIDDLENAME' },
+                        { data: 'LASTNAME' },
+                        { data: 'EXTENSIONNAME' },
+                        { data: 'IDNUMBER' },
+                        { data: 'GOVTIDTYPE' },
+                        { data: 'STREETNO_PUROKNO' },
+                        { data: 'BARANGAY' },
+                        { data: 'CITYMUNICIPALITY' },
+                        { data: 'DISTRICT' },
+                        { data: 'PROVINCE' },
+                        { data: 'REGION' },
+                        { data: 'BIRTHDATE' },
+                        { data: 'PLACEOFBIRTH' },
+                        { data: 'MOBILENO' },
+                        { data: 'SEX' },
+                        { data: 'NATIONALITY' },
+                        { data: 'PROFESSION' },
+                        { data: 'SOURCEOFFUNDS' },
+                        { data: 'MOTHERMAIDENNAME' },
+                    ],
+                    columnDefs: [
+                        { width: '150px', targets: 0 },
+                    ],
+                    autoWidth: false,
+                    createdRow: function (row, data, dataIndex) {
+                        $(row).find('.invalid-field').css('color', 'red');
+                    },
+                });
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        },
+        handleFileChange(event) {
+            this.file = event.target.files[0];
+        },
+
+        // Add your validation method here
+        isValidField(field, value) {
+            const alphanumericFields = ['FIRSTNAME', 'MIDDLENAME', 'LASTNAME'];
+            const regex = /^[a-zA-Z\s]*$/; // Only letters and spaces
+            if (alphanumericFields.includes(field)) {
+                return regex.test(value); // Return true if value passes regex
+            }
+            return true; // Default: consider field valid if no rule applies
+        },
+        // Function to return the class for a field
+        getFieldClass(fieldName, field) {
+            return !isValidField(fieldName, field) ? 'bg-red-500 text-white' : ''; // Apply red background if invalid
+        },
+
+        // Function to determine the row class (optional)
+        getRowClass(item) {
+            // Example: if the item has any invalid field, make the row background red
+            return Object.keys(item).some((key) => !isValidField(key, item[key]))
+                ? 'bg-red-100' // Apply light red background if any field is invalid
+                : '';
+        },
 
         toggleDropdown() {
             this.isDropdownOpen = !this.isDropdownOpen;
         },
 
-        async initMatchDataTable() {
-            try {
-                const response = await axios.get('api/getMatchData');
-                const data = response.data;
-                this.matched_data = data.data;
-                this.totalmatchData = data.count;
 
-                if (data.count === 0) {
-                    console.error('No records found.');
-                    return;
-                }
 
-                this.calculateVisiblePagesMatch();
-            } catch (error) {
-                console.error('Failed to fetch data:', error);
+        isValidField(fieldName, field) {
+            // Ensure field is treated as a string
+            const fieldStr = String(field || '').trim();
+
+            if (fieldStr === '') {
+                return false; // Check for null, undefined, or empty string
+            }
+
+            switch (fieldName) {
+                case 'FIRSTNAME':
+                case 'MIDDLENAME':
+                case 'LASTNAME':
+                    return /^[a-zA-Z\s]+$/.test(fieldStr) && fieldStr.length >= 2; // Only letters and spaces, and at least 2 letters
+
+                case 'BIRTHDATE':
+                    return /^\d{4}-\d{2}-\d{2}$/.test(fieldStr); // Date format yyyy-mm-dd
+
+                case 'MOBILENO':
+                    return /^\d{11}$/.test(fieldStr); // Exactly 11 digits
+
+                default:
+                    return true;
             }
         },
-
         changePage(page) {
             if (page >= 1 && page <= this.totalMatchPages) {
                 this.currentMatchPage = page;
@@ -949,15 +1155,43 @@ export default {
             } catch (error) {
                 console.error('Error exporting data:', error);
             }
+        },
+        onInvalidDataPageChange(page) {
+            if (page >= 1 && page <= this.invalidTotalPages) {
+                this.invalidCurrentPage = page;
+                this.calculateInvalidDataVisiblePages();
+            }
+        },
+
+        calculateInvalidDataVisiblePages() {
+            this.invalidDataVisiblePages = this.getInvalidDataVisiblePages(this.invalidTotalPages, this.invalidCurrentPage);
+        },
+
+        getInvalidDataVisiblePages(totalPages, currentPage) {
+            const pages = [];
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+
+            if (currentPage <= 3) {
+                endPage = Math.min(5, totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                startPage = Math.max(1, totalPages - 4);
+            }
+
+            for (let page = startPage; page <= endPage; page++) {
+                pages.push(page);
+            }
+
+            return pages;
         }
 
     },
 
     mounted() {
 
-        console.log("Visible Pages Duplicate Staging:", this.visiblePagesDuplicateStaging);
+        Promise.all([this.getDuplicateDataFarmersReg(), this.duplicateDataStaging()]);
+        //  this.initMatchDataTable()
 
-        Promise.all([this.initDataTable(), this.initMatchDataTable(), this.duplicateDataStaging(), this.getDuplicateDataFarmersReg()]);
     }
 };
 </script>
@@ -1000,5 +1234,16 @@ table {
 .striped-table tbody tr:nth-child(odd) {
     background-color: #ffffff;
     /* White for odd rows */
+}
+
+
+#toast-container {
+    position: fixed;
+    top: 1rem;
+    /* Adjust as needed */
+    right: 1rem;
+    /* Adjust as needed */
+    z-index: 9999;
+    /* Ensure the toast is above other elements */
 }
 </style>

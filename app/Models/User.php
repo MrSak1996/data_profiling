@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -18,9 +21,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+       'id', 'agency_loc', 'first_name', 'middle_name', 'last_name', 'ext_name', 'sex', 'date_of_birth', 'account_status', 'emp_status', 'agency_code', 'region_code', 'province_code', 'province_desc', 'service_code', 'division_code', 'section_code', 'section_desc', 'position_item_no', 'position_id', 'contact_no', 'complete_address', 'office_station', 'mun_code', 'mun_desc', 'brgy_code', 'brgy_desc', 'name', 'email', 'email_verified_at', 'username', 'password', 'remember_token', 'api_token', 'user_role', 'created_at', 'updated_at'
     ];
 
     /**
@@ -29,8 +30,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+       'id', 'agency_loc', 'first_name', 'middle_name', 'last_name', 'ext_name', 'sex', 'date_of_birth', 'account_status', 'emp_status', 'agency_code', 'region_code', 'province_code', 'province_desc', 'service_code', 'division_code', 'section_code', 'section_desc', 'position_item_no', 'position_id', 'contact_no', 'complete_address', 'office_station', 'mun_code', 'mun_desc', 'brgy_code', 'brgy_desc', 'name', 'email', 'email_verified_at', 'username', 'password', 'remember_token', 'api_token', 'user_role', 'created_at', 'updated_at'
     ];
 
     /**
@@ -40,6 +40,5 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
     ];
 }
