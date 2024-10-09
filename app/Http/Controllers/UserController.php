@@ -21,22 +21,20 @@ class UserController extends Controller
 
 
 
-
     public function login(Request $request)
     {
-        $hashPass = hash('sha256', $request->password);
-        $user = User::where('username', $request->input('username'))
-            ->where('password', $hashPass)
-            ->first();
-        // print_r($user);
-
-        if ($user) {
+        // Retrieve the user by username
+        $user = User::where('username', $request->input('username'))->first();
+        // Check if user exists and verify the password
+        if ($user && Hash::check($request->password, $user->password)) {
+            // Create an API token
             $token = $user->createToken('auth-token')->plainTextToken;
 
-            User::where('id', $user->id)
-                ->update([
-                    'api_token' => $token
-                ]);
+            // Update the user with the new token if needed (but typically not necessary)
+            $user->update([
+                'api_token' => $token
+            ]);
+
             return response()->json([
                 'status' => true,
                 'message' => 'Success',
@@ -47,7 +45,7 @@ class UserController extends Controller
         } else {
             return response()->json([
                 'status' => false,
-                'message' => 'Failed',
+                'message' => 'Invalid credentials',
             ]);
         }
     }
@@ -58,105 +56,117 @@ class UserController extends Controller
         if ($user) {
             $user->tokens()->delete(); // Invalidate all user tokens
         }
-
         return response()->json(['message' => 'Successfully logged out'], 200);
     }
-    public function getProfileInfo(Request $request)
-    {
-        $user_id = $request->query('user_id');
-        $api_token = $request->query('api_token');
-        $query = DB::table('users as u')
-            ->select(
-              'u.'
-            )
-            ->join('dp_onbint_staging as s', 's.RSBSASYSTEMGENERATEDNUMBER', '=', 'v.rsbsa_no')
-            ->get();
-        return response()->json($query);
 
-        if (!$user) {
-            return Response::json(['error' => 'User not found'], 404);
-        }
-       
-        return Response::json($responseData, 200);
+
+
+    public function getUserAccount()
+    {
+        $profiles = DB::table('users as u')
+            ->leftJoin('dp_onbint_agency as a', 'a.ID', '=', 'u.id_agency')
+            ->leftJoin('dp_onbint_region as r', 'r.ID', '=', 'u.id_region')
+            ->select(
+                'u.id',
+                'u.first_name',
+                'u.middle_name',
+                'u.last_name',
+                'u.ext_name',
+                'a.AGENCY as agency',
+                'r.INFO_REGION as office',
+                DB::raw("CASE WHEN u.sex = 1 THEN 'MALE' WHEN u.sex = 2 THEN 'FEMALE' END AS sex"),
+                'u.date_of_birth',
+                DB::raw("CASE WHEN u.account_status = 1 THEN 'ACTIVE' ELSE 'INACTIVE' END as account_status"),
+                DB::raw("CASE 
+                WHEN u.user_role = 1 THEN 'SUPER ADMIN'
+                WHEN u.user_role = 2 THEN 'ADMIN'
+                WHEN u.user_role = 3 THEN 'USER VALIDATOR'
+                END as user_role"),
+                'u.position',
+                'u.contact_no',
+                'u.complete_address',
+                'u.email',
+                'u.brgy_code',
+                'u.mun_code',
+                'u.province_code',
+                'u.region_code'
+            )
+            ->get();
+
+        return response()->json($profiles);
     }
     public function getAgency()
     {
         $query = DB::table('dp_onbint_agency')
-        ->select(
-         'ID',
-         'AGENCY'
-        )
-        ->get();
+            ->select(
+                'ID',
+                'AGENCY'
+            )
+            ->get();
         return response()->json($query);
     }
     public function getRegionOffice()
     {
         $query = DB::table('dp_onbint_region')
-        ->select(
-         'ID',
-         'INFO_REGION'
-        )
-        ->get();
+            ->select(
+                'ID',
+                'INFO_REGION'
+            )
+            ->get();
         return response()->json($query);
     }
     public function getServiceInfo()
     {
         $query = DB::table('dp_onbint_service')
-        ->select(
-         'ID',
-         'INFO_SERVICE'
-        )
-        ->get();
+            ->select(
+                'ID',
+                'INFO_SERVICE'
+            )
+            ->get();
         return response()->json($query);
     }
     public function getDivision()
     {
         $query = DB::table('dp_onbint_division')
-        ->select(
-         'ID',
-         'INFO_DIVISION'
-        )
-        ->get();
+            ->select(
+                'ID',
+                'INFO_DIVISION'
+            )
+            ->get();
         return response()->json($query);
     }
-    
+
     public function createUser(Request $request)
     {
-        // Validate the incoming request data
-        $validator = Validator::make($request->all(), [
-            'firstname' => 'required|string|max:255',
-            'middlename' => 'nullable|string|max:255',
-            'lastname' => 'required|string|max:255',
-            'province' => 'required|string|max:255',
-            'region' => 'required|string|max:255',
-            'complete_address' => 'required|string|max:255',
-            'sex' => 'required|integer|in:1,2',
-            'birthdate' => 'required|date',
-            'mobile_number' => 'required|string|regex:/^[0-9]{10,15}$/',
-            'email_address' => 'required|string|email|max:255|unique:users,email',
-            'user_role' => 'required|integer|in:1,2,3',
-        ]);
-
-        // If validation fails, return a JSON response with the errors
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
 
         try {
             // Create a new user
             $user = User::create([
-                'firstname' => $request->input('firstname'),
-                'middlename' => $request->input('middlename'),
-                'lastname' => $request->input('lastname'),
-                'province' => $request->input('province'),
-                'region' => $request->input('region'),
-                'complete_address' => $request->input('complete_address'),
+                'id_agency' => $request->input('agency'),
+                'id_region' => $request->input('office'),
+                'agency_loc' => null,
+                'first_name' => $request->input('firstname'),
+                'middle_name' => $request->input('middlename'),
+                'last_name' => $request->input('lastname'),
+                'ext_name' => $request->input('ext_name'),
                 'sex' => $request->input('sex'),
-                'birthdate' => $request->input('birthdate'),
-                'mobile_number' => $request->input('mobile_number'),
-                'email' => $request->input  ('email_address'),
-                'password' => Hash::make('defaultPassword'), 
-                'user_role' => $request->input('user_role'),// Example password, change as needed
+                'date_of_birth' => $request->input('birthdate'),
+                'account_status' => '1',
+                'emp_status' => $request->input('emp_status'),
+                'position' => $request->input('position'),
+                'contact_no' => $request->input('mobile_number'),
+                'complete_address' => $request->input('complete_address'),
+                'brgy_code' => $request->input('barangay'),
+                'mun_code' => $request->input('municipality'),
+                'province_code' => $request->input('province'),
+                'region_code' => $request->input('region'),
+                'email' => $request->input('email_address'),
+                'username' => $request->input('username'),
+                'password' => Hash::make($request->input('password')),
+                'user_role' => $request->input('user_role'),
+                'created_at' => now(),
+                'updated_at' => now(),
+                // Example password, change as needed
             ]);
 
             // Return a success response

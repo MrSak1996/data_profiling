@@ -21,8 +21,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-       'id', 'agency_loc', 'first_name', 'middle_name', 'last_name', 'ext_name', 'sex', 'date_of_birth', 'account_status', 'emp_status', 'agency_code', 'region_code', 'province_code', 'province_desc', 'service_code', 'division_code', 'section_code', 'section_desc', 'position_item_no', 'position_id', 'contact_no', 'complete_address', 'office_station', 'mun_code', 'mun_desc', 'brgy_code', 'brgy_desc', 'name', 'email', 'email_verified_at', 'username', 'password', 'remember_token', 'api_token', 'user_role', 'created_at', 'updated_at'
-    ];
+'id', 'id_agency', 'id_region', 'reg_code', 'agency_loc', 'first_name', 'middle_name', 'last_name', 'ext_name', 'sex', 'date_of_birth', 'account_status', 'emp_status', 'position', 'contact_no', 'complete_address', 'brgy_code', 'mun_code', 'province_code', 'region_code', 'email', 'email_verified_at', 'username', 'password', 'remember_token', 'api_token', 'user_role', 'created_at', 'updated_at'    ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -30,8 +29,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-       'id', 'agency_loc', 'first_name', 'middle_name', 'last_name', 'ext_name', 'sex', 'date_of_birth', 'account_status', 'emp_status', 'agency_code', 'region_code', 'province_code', 'province_desc', 'service_code', 'division_code', 'section_code', 'section_desc', 'position_item_no', 'position_id', 'contact_no', 'complete_address', 'office_station', 'mun_code', 'mun_desc', 'brgy_code', 'brgy_desc', 'name', 'email', 'email_verified_at', 'username', 'password', 'remember_token', 'api_token', 'user_role', 'created_at', 'updated_at'
-    ];
+'id', 'id_agency', 'id_region', 'reg_code', 'agency_loc', 'first_name', 'middle_name', 'last_name', 'ext_name', 'sex', 'date_of_birth', 'account_status', 'emp_status', 'position', 'contact_no', 'complete_address', 'brgy_code', 'mun_code', 'province_code', 'region_code', 'email', 'email_verified_at', 'username', 'password', 'remember_token', 'api_token', 'user_role', 'created_at', 'updated_at'    ];
 
     /**
      * The attributes that should be cast.

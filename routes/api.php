@@ -20,10 +20,17 @@ use App\Http\Controllers\UserController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::middleware('auth:api')->group(function () {
+    Route::get('/authenticated', function (Request $request) {
+        return response()->json(['authenticated' => true]);
+    });
+});
+
+Route::post('/logout', [UserController::class, 'logout']);
+
+
 
 Route::post('login',[UserController::class,'login']);
-Route::post('logout',[UserController::class,'logout']);
-Route::post('/getProfileInfo',[UserController::class,'getProfileInfo']);
 Route::post('/createUser',[UserController::class,'createUser']);
 Route::post('/import_excel', [DataProfilingController::class, 'saveExcelData']);
 Route::post('/checkValidation', [DataProfilingController::class, 'checkValidation']);
@@ -46,5 +53,7 @@ Route::middleware('api')->group(function () {
     Route::get('/getRegionOffice', [UserController::class, 'getRegionOffice']);
     Route::get('/getServiceInfo', [UserController::class, 'getServiceInfo']);
     Route::get('/getDivision', [UserController::class, 'getDivision']);
+    Route::get('/getUserAccount',[UserController::class,'getUserAccount']);
+    
 
 });

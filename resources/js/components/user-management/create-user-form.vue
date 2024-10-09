@@ -1,11 +1,14 @@
 <script>
 import ProgressBar from '../progressBar.vue';
+import EventToast from "../EventToast.vue";
+
 import axios from 'axios';
 
 export default {
     name: 'create-user-form',
     components: {
         ProgressBar,
+        EventToast,
     },
     data() {
         return {
@@ -29,9 +32,9 @@ export default {
             service: [],
             division: [],
             formData: {
-                agency:'',
-                office:'',
-                position:'',
+                agency: '',
+                office: '',
+                position: '',
                 firstname: '',
                 middlename: '',
                 lastname: '',
@@ -43,6 +46,9 @@ export default {
                 mobile_number: '',
                 email_address: '',
                 user_role: '',
+                emp_status: '',
+                username: '',
+                password: '',
             },
 
         };
@@ -81,10 +87,19 @@ export default {
     methods: {
         submitForm() {
             // Send formData to the server via Axios or another method
-            console.log(this.formData);
             axios.post('api/createUser', this.formData)
-                .then(response => { /* handle success */ })
-                .catch(error => { /* handle error */ });
+                .then(response => {
+                    this.triggerSuccess(response.data.message);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                })
+                .catch(error => {
+                    this.triggerError(error.response.data.message)
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
+                });
         },
         async getAgency() {
             try {
@@ -119,6 +134,18 @@ export default {
             } catch (error) {
 
             }
+        },
+        triggerSuccess(message) {
+            this.$refs.toast.showToast(message, 'success');
+        },
+        triggerError(message) {
+            this.$refs.toast.showToast(message, 'error');
+        },
+        generateUsername() {
+            const firstInitial = this.formData.firstname ? this.formData.firstname[0].toLowerCase() : '';
+            const middleInitial = this.formData.middlename ? this.formData.middlename[0].toLowerCase() : '';
+            const lastName = this.formData.lastname ? this.formData.lastname.toLowerCase() : '';
+            this.formData.username = `${firstInitial}${middleInitial}${lastName}`;
         },
         toggleAgencyDropdown() {
             this.showAgencyDropdown = !this.showAgencyDropdown;
@@ -160,43 +187,61 @@ export default {
     <ProgressBar ref="progressBar" />
     <form @submit.prevent="submitForm">
         <!-- Name Section -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
             <div>
                 <label for="firstname" class="block text-sm font-medium text-gray-700">First Name</label>
-                <input id="firstname" type="text" v-model="formData.firstname"
+                <input id="firstname" type="text" v-model="formData.firstname" @input="generateUsername"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="John" />
+                    placeholder="" />
             </div>
 
             <div>
                 <label for="middlename" class="block text-sm font-medium text-gray-700">Middle Name</label>
-                <input id="middlename" type="text" v-model="formData.middlename"
+                <input id="middlename" type="text" v-model="formData.middlename" @input="generateUsername"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Doe" />
+                    placeholder="" />
             </div>
 
             <div>
                 <label for="lastname" class="block text-sm font-medium text-gray-700">Last Name</label>
-                <input id="lastname" type="text" v-model="formData.lastname"
+                <input id="lastname" type="text" v-model="formData.lastname" @input="generateUsername"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Smith" />
+                    placeholder="" />
+            </div>
+            <div>
+                <label for="ext_name" class="block text-sm font-medium text-gray-700">Extension Name</label>
+                <input id="ext_name" type="text" v-model="formData.ext_name"
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="" />
             </div>
         </div>
 
         <!-- Address Section -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div>
+                <label for="province" class="block text-sm font-medium text-gray-700">Barangay</label>
+                <input id="barangay" type="text" v-model="formData.barangay"
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="" />
+            </div>
+            <div>
+                <label for="province" class="block text-sm font-medium text-gray-700">Municipality</label>
+                <input id="municipality" type="text" v-model="formData.municipality"
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="" />
+            </div>
             <div>
                 <label for="province" class="block text-sm font-medium text-gray-700">Province</label>
                 <input id="province" type="text" v-model="formData.province"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Laguna" />
+                    placeholder="" />
             </div>
 
             <div>
                 <label for="region" class="block text-sm font-medium text-gray-700">Region</label>
                 <input id="region" type="text" v-model="formData.region"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Region IV-A" />
+                    placeholder="" />
             </div>
         </div>
 
@@ -239,7 +284,7 @@ export default {
         </div>
 
         <!-- Work Info Section -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
             <div>
                 <label for="user_role" class="block text-sm font-medium text-gray-700">User
                     Role</label>
@@ -270,7 +315,7 @@ export default {
 
                     <!-- Scrollable dropdown list -->
                     <ul class="max-h-48 overflow-y-auto">
-                        <li  v-for="agency in filteredAgencies" :key="agency.id" @click="selectAgency(agency)"
+                        <li v-for="agency in filteredAgencies" :key="agency.id" @click="selectAgency(agency)"
                             class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                             {{ agency.AGENCY }}
                         </li>
@@ -311,6 +356,15 @@ export default {
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Software Developer" />
             </div>
+            <div>
+                <label for="emp_status" class="block text-sm font-medium text-gray-700">Status</label>
+                <select v-model="formData.emp_status" id="emp_status"
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                    <option value="1">COS</option>
+                    <option value="2">Permanent</option>
+                    <option value="3">Job Order</option>
+                </select>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -340,28 +394,28 @@ export default {
             <!-- <div class="relative">
                 <label for="region_office" class="block text-sm font-medium text-gray-700">Service Information</label> -->
 
-                <!-- Custom select dropdown -->
-                <!-- <div @click="toggleDivisionDropdown"
+            <!-- Custom select dropdown -->
+            <!-- <div @click="toggleDivisionDropdown"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
                     <span>{{ selectedDivisionName || 'Select Division' }}</span>
                     <span class="float-right">▼</span>
                 </div> -->
 
-                <!-- Dropdown with search bar and scrollable options -->
-                <!-- <div v-if="showDivisionDropdown"
+            <!-- Dropdown with search bar and scrollable options -->
+            <!-- <div v-if="showDivisionDropdown"
                     class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-20"> -->
-                    <!-- Search input -->
-                    <!-- <input v-model="searchQuery" type="text" placeholder="Search agency..."
+            <!-- Search input -->
+            <!-- <input v-model="searchQuery" type="text" placeholder="Search agency..."
                         class="w-full px-4 py-2 border-b border-gray-300 focus:outline-none" /> -->
 
-                    <!-- Scrollable dropdown list -->
-                    <!-- <ul class="max-h-48 overflow-y-auto">
+            <!-- Scrollable dropdown list -->
+            <!-- <ul class="max-h-48 overflow-y-auto">
                         <li v-for="division in filteredDivisionInfo" :key="division.id"
                             @click="selectDivision(division)" class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
                             {{ division.INFO_DIVISION }}
                         </li>
                     </ul> -->
-                <!-- </div> -->
+            <!-- </div> -->
             <!-- </div> -->
         </div>
 
@@ -374,14 +428,14 @@ export default {
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
                 <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                <input readonly disabled="username" type="text"
+                <input id="username" type="text" v-model="formData.username" disabled
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="johndoe" />
+                    placeholder="Username" />
             </div>
 
             <div>
                 <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                <input id="password" type="password"
+                <input v-model="formData.password" id="password" type="password"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="********" />
             </div>
@@ -395,4 +449,6 @@ export default {
             </button>
         </div>
     </form>
+    <event-toast ref="toast"></event-toast>
+
 </template>
