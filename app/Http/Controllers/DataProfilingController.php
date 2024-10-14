@@ -35,7 +35,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class DataProfilingController extends Controller
 {
-    
+
 
     public function getOnbintStaging(Request $request)
     {
@@ -636,20 +636,20 @@ class DataProfilingController extends Controller
             'EXTENSIONNAME',
             OnbintModel::raw('COUNT(*) as duplicate_count')
         )
-        ->where('FILE_ID', $id)
-        ->groupBy(
-            'FILE_ID',
-            'RSBSASYSTEMGENERATEDNUMBER',
-            'FIRSTNAME',
-            'MIDDLENAME',
-            'LASTNAME',
-            'SEX',
-            'BIRTHDATE',
-            'EXTENSIONNAME'
-        )
-        ->havingRaw('COUNT(*) > 1')
-        ->orderBy('duplicate_count', 'DESC');
-        
+            ->where('FILE_ID', $id)
+            ->groupBy(
+                'FILE_ID',
+                'RSBSASYSTEMGENERATEDNUMBER',
+                'FIRSTNAME',
+                'MIDDLENAME',
+                'LASTNAME',
+                'SEX',
+                'BIRTHDATE',
+                'EXTENSIONNAME'
+            )
+            ->havingRaw('COUNT(*) > 1')
+            ->orderBy('duplicate_count', 'DESC');
+
         // Main query to include additional fields
         $query = OnbintModel::joinSub($subquery, 'duplicates', function ($join) {
             $join->on('dp_onbint_staging.RSBSASYSTEMGENERATEDNUMBER', '=', 'duplicates.RSBSASYSTEMGENERATEDNUMBER')
@@ -659,45 +659,45 @@ class DataProfilingController extends Controller
                 ->on('dp_onbint_staging.SEX', '=', 'duplicates.SEX')
                 ->on('dp_onbint_staging.BIRTHDATE', '=', 'duplicates.BIRTHDATE');
         })
-        ->select(
-            'dp_onbint_staging.RSBSASYSTEMGENERATEDNUMBER',
-            'dp_onbint_staging.FIRSTNAME',
-            'dp_onbint_staging.MIDDLENAME',
-            'dp_onbint_staging.LASTNAME',
-            'dp_onbint_staging.EXTENSIONNAME',
-            'dp_onbint_staging.IDNUMBER',      // Ensure correct column name
-            'dp_onbint_staging.GOVTIDTYPE',    // Correct the typo
-            'dp_onbint_staging.SEX',
-            'dp_onbint_staging.BIRTHDATE',
-            'dp_onbint_staging.STREETNO_PUROKNO',
-            'dp_onbint_staging.BARANGAY',
-            'dp_onbint_staging.CITYMUNICIPALITY',
-            'dp_onbint_staging.DISTRICT',
-            'dp_onbint_staging.PROVINCE',
-            'dp_onbint_staging.REGION',
-            'dp_onbint_staging.PLACEOFBIRTH',
-            'dp_onbint_staging.MOBILENO',
-            'dp_onbint_staging.NATIONALITY',
-            'dp_onbint_staging.PROFESSION',
-            'dp_onbint_staging.SOURCEOFFUNDS',
-            'dp_onbint_staging.MOTHERMAIDENNAME',
-            'dp_onbint_staging.NOOFFARMPARCEL',
-            'dp_onbint_staging.TFA',
-            'duplicates.duplicate_count'
-        )
-        ->where('dp_onbint_staging.FILE_ID', $id)
-        ->orderBy('duplicates.duplicate_count', 'DESC')
-        ->chunk(1000, function ($results) use ($stringComparison, &$duplicates, $id) {
-            foreach ($results as $row) {
-                // Compare names using Jaro-Winkler algorithm
-                $records = OnbintModel::where('dp_onbint_staging.RSBSASYSTEMGENERATEDNUMBER', $row->RSBSASYSTEMGENERATEDNUMBER)
-                ->whereRaw('TRIM(LOWER(dp_onbint_staging.FIRSTNAME)) = ?', [trim(strtolower($row->FIRSTNAME))])
-                ->whereRaw('TRIM(LOWER(dp_onbint_staging.LASTNAME)) = ?', [trim(strtolower($row->LASTNAME))])
-                ->whereRaw('TRIM(LOWER(dp_onbint_staging.MIDDLENAME)) = ?', [trim(strtolower($row->MIDDLENAME))])
-                ->where('dp_onbint_staging.SEX', $row->SEX)
-                ->where('dp_onbint_staging.BIRTHDATE', $row->BIRTHDATE)
-                ->get();
-                
+            ->select(
+                'dp_onbint_staging.RSBSASYSTEMGENERATEDNUMBER',
+                'dp_onbint_staging.FIRSTNAME',
+                'dp_onbint_staging.MIDDLENAME',
+                'dp_onbint_staging.LASTNAME',
+                'dp_onbint_staging.EXTENSIONNAME',
+                'dp_onbint_staging.IDNUMBER',      // Ensure correct column name
+                'dp_onbint_staging.GOVTIDTYPE',    // Correct the typo
+                'dp_onbint_staging.SEX',
+                'dp_onbint_staging.BIRTHDATE',
+                'dp_onbint_staging.STREETNO_PUROKNO',
+                'dp_onbint_staging.BARANGAY',
+                'dp_onbint_staging.CITYMUNICIPALITY',
+                'dp_onbint_staging.DISTRICT',
+                'dp_onbint_staging.PROVINCE',
+                'dp_onbint_staging.REGION',
+                'dp_onbint_staging.PLACEOFBIRTH',
+                'dp_onbint_staging.MOBILENO',
+                'dp_onbint_staging.NATIONALITY',
+                'dp_onbint_staging.PROFESSION',
+                'dp_onbint_staging.SOURCEOFFUNDS',
+                'dp_onbint_staging.MOTHERMAIDENNAME',
+                'dp_onbint_staging.NOOFFARMPARCEL',
+                'dp_onbint_staging.TFA',
+                'duplicates.duplicate_count'
+            )
+            ->where('dp_onbint_staging.FILE_ID', $id)
+            ->orderBy('duplicates.duplicate_count', 'DESC')
+            ->chunk(1000, function ($results) use ($stringComparison, &$duplicates, $id) {
+                foreach ($results as $row) {
+                    // Compare names using Jaro-Winkler algorithm
+                    $records = OnbintModel::where('dp_onbint_staging.RSBSASYSTEMGENERATEDNUMBER', $row->RSBSASYSTEMGENERATEDNUMBER)
+                        ->whereRaw('TRIM(LOWER(dp_onbint_staging.FIRSTNAME)) = ?', [trim(strtolower($row->FIRSTNAME))])
+                        ->whereRaw('TRIM(LOWER(dp_onbint_staging.LASTNAME)) = ?', [trim(strtolower($row->LASTNAME))])
+                        ->whereRaw('TRIM(LOWER(dp_onbint_staging.MIDDLENAME)) = ?', [trim(strtolower($row->MIDDLENAME))])
+                        ->where('dp_onbint_staging.SEX', $row->SEX)
+                        ->where('dp_onbint_staging.BIRTHDATE', $row->BIRTHDATE)
+                        ->get();
+
 
                     if ($records->count() > 1) {
                         $recordA = $records->shift()->toArray(); // The first record
@@ -771,10 +771,10 @@ class DataProfilingController extends Controller
                     }
                 }
             });
-            if ($request->has('export')) {
-               
-                return $this->exportDedup($duplicates);
-            }
+        if ($request->has('export')) {
+
+            return $this->exportDedup($duplicates);
+        }
 
         return response()->json($duplicates); // Return the duplicates as a JSON response
     }
@@ -954,7 +954,7 @@ class DataProfilingController extends Controller
         $row = 2;
         $index = 1;
         foreach ($data as $record) {
-            $full_name = $record->FIRSTNAME." ".$record->MIDDLENAME." ".$record->LASTNAME;
+            $full_name = $record->FIRSTNAME . " " . $record->MIDDLENAME . " " . $record->LASTNAME;
             $sheet->setCellValue('A' . $row, $index);
             $sheet->setCellValue('B' . $row, "");
             $sheet->setCellValue('C' . $row, "");
@@ -986,7 +986,7 @@ class DataProfilingController extends Controller
             $sheet->setCellValue('AB' . $row, $record->TFA);
             $sheet->setCellValue('AC' . $row, $record->BIRTHDATE);
             $sheet->setCellValue('AC' . $row, $full_name);
-            $row++; 
+            $row++;
             $index++;
         }
 
@@ -1002,28 +1002,26 @@ class DataProfilingController extends Controller
 
         // Download the file and delete it after sending
         return response()->download($fileName)->deleteFileAfterSend(true);
-
-        
-
     }
 
-    public function exportDedup($data) {
+    public function exportDedup($data)
+    {
         $templatePath = public_path('templates/rffa4_to_staging_match.xlsx');
-    
+
         if (!file_exists($templatePath)) {
             return response()->json(['error' => 'Template file not found.'], 404);
         }
-    
+
         $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($templatePath);
         $sheet = $spreadsheet->getActiveSheet();
-    
+
         $row = 2;
         $index = 1;
-        
+
         foreach ($data as $record) {
             // Concatenate the full name
             $full_name = $record['FIRSTNAME'] . " " . $record['MIDDLENAME'] . " " . $record['LASTNAME'];
-            
+
             // Set cell values for unique records
             $sheet->setCellValue('A' . $row, $index); // Index column
             $sheet->setCellValue('B' . $row, $record['similarity']); // Blank column
@@ -1055,26 +1053,33 @@ class DataProfilingController extends Controller
             $sheet->setCellValue('AB' . $row, $record['TFA']);
             $sheet->setCellValue('AC' . $row, $record['BIRTHDATE']);
             $sheet->setCellValue('AD' . $row, $full_name); // Store full name in a separate column
-            
+
             // Increment row and index for the next record
             $row++;
             $index++;
         }
-    
+
         $fileName = 'rffa4_to_staging_dedup.xlsx';
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-    
+
         try {
             $writer->save($fileName);
         } catch (\PhpOffice\PhpSpreadsheet\Exception $e) {
             return response()->json(['error' => 'Error saving file: ' . $e->getMessage()], 500);
         }
-    
+
         // Download the file and delete it after sending
         return response()->download($fileName)->deleteFileAfterSend(true);
     }
-    
 
-
-    
+    public function getPrograms()
+    {
+        $query = DB::table('dp_onbint_programs')
+            ->select(
+                'id',
+                'program_title'
+            )
+            ->get();
+        return response()->json($query);
+    }
 }

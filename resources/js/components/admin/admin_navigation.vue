@@ -95,11 +95,9 @@
                     Duplicate Data
                 </a>
             </li>
-            <li>
-                <a
-                    class="inline-block p-4 text-gray-400 rounded-t-lg cursor-not-allowed dark:text-gray-500">Disabled</a>
-            </li>
+    
         </ul>
+        
     </div>
     <adminTabsUpload :activeTab="activeTab" />
     <adminTabsRecords :activeTab="activeTab" />

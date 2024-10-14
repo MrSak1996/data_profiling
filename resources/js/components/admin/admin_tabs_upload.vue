@@ -3,6 +3,32 @@
         class="flex flex-col items-start h-auto p-4 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <ProgressBar ref="progressBar" />
         <toast />
+        <div class="relative w-full lg:w-full mb-4">
+            <label for="programs" class="block text-sm font-medium text-gray-700">Programs</label>
+
+            <!-- Custom select dropdown -->
+            <div @click="toggleDropdown"
+                class="mt-1 block w-full px-4 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer">
+                <span>{{ selectedProgramsName || 'Select Program' }}</span>
+                <span class="float-right">▼</span>
+            </div>
+
+            <!-- Dropdown with search bar and scrollable options -->
+            <div v-if="showProgramsDropdown"
+                class="absolute w-full bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-20">
+                <!-- Search input -->
+                <input v-model="searchQuery" type="text" placeholder="Search programs..."
+                    class="w-full px-4 py-2 border-b border-gray-300 focus:outline-none" />
+
+                <!-- Scrollable dropdown list -->
+                <ul class="max-h-48 overflow-y-auto">
+                    <li v-for="programs in filteredPrograms" :key="programs.id" @click="selectPrograms(programs)"
+                        class="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                        {{ programs.program_title }}
+                    </li>
+                </ul>
+            </div>
+        </div>
 
         <form @submit.prevent="uploadRecords" ref="mainForm" enctype="multipart/form-data"
             class="flex flex-col items-center w-full space-y-4">
@@ -47,12 +73,29 @@ export default {
         ProgressBar,
         toast
     },
+    mounted() {
+        this.getPrograms();
+    },
+    computed: {
+        filteredPrograms() {
+            return this.programs.filter(programs =>
+                programs.program_title.toLowerCase().includes(this.searchQuery.toLowerCase())
+            );
+        }
+    },
     props: ['activeTab'],
     data() {
         return {
             file: null,
+            fileAcronym: null,
             progressBar: 0,
-            
+            programs: [],
+            searchQuery: '',
+            selectedPrograms: null,
+            selectedProgramsName: null,
+            selected_id: null,
+            showProgramsDropdown: false,
+
         };
     },
     methods: {
@@ -61,6 +104,46 @@ export default {
             this.file = event.target.files[0];  // Store the file in the data property
             console.log("File selected:", this.file);
         },
+        async getPrograms() {
+            try {
+                const response = await axios.get('api/getPrograms');
+                this.programs = response.data;
+            } catch (error) {
+                console.error("Error fetching programs:", error);
+            }
+        },
+        toggleDropdown() {
+            this.showProgramsDropdown = !this.showProgramsDropdown;
+
+        },
+
+        selectPrograms(program) {
+            this.selectedProgramsName = program.program_title;
+            this.showProgramsDropdown = false;
+
+            // Generate the acronym based on the selected program title, excluding numbers
+            const words = program.program_title.split(' ');
+            const acronym = words
+                .filter(word => /^[a-zA-Z]/.test(word)) // Filter out words that start with numbers
+                .map(word => word.charAt(0))
+                .join('')
+                .toUpperCase();
+
+            // Get the current date (year, month, and day)
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const day = String(currentDate.getDate()).padStart(2, '0');
+
+            // Create the final file acronym with date
+            this.fileAcronym = `ONBINT_${acronym}_${year}${month}${day}`;
+
+
+            // Save the file acronym as needed (e.g., for further use in your form or processing)
+        },
+
+
+
 
         async uploadRecords() {
             if (!this.file) {
@@ -72,7 +155,7 @@ export default {
                 this.$refs.progressBar.startProgress();
                 const formData = new FormData();
                 formData.append("file", this.file); // Make sure this.file is a valid file object
-                formData.append("filename", this.file.name);
+                formData.append("filename", this.fileAcronym);
                 formData.append('userId', 1);
                 // formData.append('userId', this.userId);
 

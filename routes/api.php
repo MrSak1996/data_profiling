@@ -34,6 +34,7 @@ Route::post('login',[UserController::class,'login']);
 Route::post('/createUser',[UserController::class,'createUser']);
 Route::post('/import_excel', [DataProfilingController::class, 'saveExcelData']);
 Route::post('/checkValidation', [DataProfilingController::class, 'checkValidation']);
+Route::post('/addRoles', [UserController::class, 'addRoles']);
 
 
 Route::middleware('api')->group(function () {
@@ -53,7 +54,6 @@ Route::middleware('api')->group(function () {
     Route::get('/getRegionOffice', [UserController::class, 'getRegionOffice']);
     Route::get('/getServiceInfo', [UserController::class, 'getServiceInfo']);
     Route::get('/getDivision', [UserController::class, 'getDivision']);
+    Route::get('/getPrograms', [DataProfilingController::class, 'getPrograms']);
     Route::get('/getUserAccount',[UserController::class,'getUserAccount']);
-    
-
 });

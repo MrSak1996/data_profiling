@@ -36,7 +36,27 @@ const routes = [
             },
             { path: '/login-page', name: 'Login', component: Login },
             { path: '/profile', name: 'profile', component: Profile },
-            { path: '/user-accounts', name: 'user-accounts', component: UserAccounts },
+            { path: '/user-accounts', name: 'user-accounts', component: UserAccounts,
+                meta: {
+                    requiresAuth: true
+                },
+                beforeEnter: (to, from, next) => {
+                    const token = localStorage.getItem('api_token');
+                    axios.get('/api/authenticated', {
+                        params: {
+                            api_token: token
+                        }
+                    }).then(response => {
+                        if (response.data.authenticated) {
+                            next();
+                        } else {
+                            next({ name: 'Login' });
+                        }
+                    }).catch(() => {
+                        next({ name: 'Login' });
+                    });
+                }
+             },
             { path: '/create-user', name: 'create-user', component: CreateUser },
         ]
     }

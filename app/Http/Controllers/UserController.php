@@ -144,6 +144,7 @@ class UserController extends Controller
             $user = User::create([
                 'id_agency' => $request->input('agency'),
                 'id_region' => $request->input('office'),
+                'program_id' => null,
                 'agency_loc' => null,
                 'first_name' => $request->input('firstname'),
                 'middle_name' => $request->input('middlename'),
@@ -175,6 +176,18 @@ class UserController extends Controller
             // Handle any errors
             return response()->json(['message' => 'User creation failed', 'error' => $e->getMessage()], 500);
         }
+    }
+    public function addRoles(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|integer',
+            'roles' => 'required|integer', 
+        ]);
+        User::where('id', $request->input('user_id'))
+            ->update([
+                'program_id' => $request->input('roles'),
+            ]);
+        return response()->json(['message' => 'Updated successfully']);
     }
 
 

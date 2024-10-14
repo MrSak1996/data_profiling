@@ -70,7 +70,15 @@
                 </main>
             </div>
         </div>
-        <RolesModal v-if="showModal" :show="showModal" @close="toggleModal" />
+        <RolesModal v-if="showModal" 
+                        :show="showModal" 
+                        :user_id="user_id"
+                        @close="toggleModal" 
+                        :selectedPrograms="selectedPrograms"
+                        :showProgramsDropdown="showProgramsDropdown"
+                        :programs="programs"
+                        @toggle-dropdown="toggleAgencyDropdown"
+                        @selected-programs="selectPrograms" />
 
     </div>
 </template>
@@ -90,15 +98,45 @@ export default {
     },
     data() {
         return {
+            user_id:0,
             progressBar: null,
             showModal: false,
-
+            showModal: false,
+            programs: [],
+            selectedPrograms: null,
+            showProgramsDropdown: false,
         }
     },
     mounted() {
         this.getProfileInfo();
+        this.getPrograms();
+
     },
+
     methods: {
+        async getPrograms() {
+            try {
+                const response = await axios.get('api/getPrograms');
+                this.programs = response.data;
+            } catch (error) {
+                console.error("Error fetching programs:", error);
+            }
+        },
+        toggleAgencyDropdown() {
+            this.showProgramsDropdown = !this.showProgramsDropdown;
+        },
+        selectPrograms(program) {
+            this.selectedPrograms = program;
+            this.showProgramsDropdown = false;
+        },
+        toggleModal() {
+            this.showModal = !this.showModal;
+        },
+    
+        handleRolesClick() {
+            this.showModal = true;
+        },
+      
         async getProfileInfo() {
             try {
 
@@ -143,10 +181,16 @@ export default {
                         {
                             orderable: false,
                             data: null,
-                            defaultContent: `
-                            <button type="button" class="btn-roles text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Programs Permission</button>
-                            <button type="button" class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800">Enabled</button>
-                            `,
+                            render(data, type, row) {
+                            return `
+                                <button
+                                data-id="${data.id}"
+                                type="button" 
+                                class="btn-roles text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">
+                               ${data.id} Programs Permission
+                                </button>
+                            `;
+                            },
                         },
                     ],
                     columnDefs: [
@@ -162,18 +206,15 @@ export default {
                 });
                 $('#user_tbl tbody').on('click', '.btn-roles', () => {
                     this.handleRolesClick();
+                    let element = event.target;
+                    this.user_id = Number(element.getAttribute('data-id')); // Convert to number
+                
 
                 });
 
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
-        },
-        toggleModal() {
-            this.showModal = !this.showModal;
-        },
-        handleRolesClick() {
-            this.showModal = true;
         },
 
     }
