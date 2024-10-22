@@ -36,6 +36,9 @@ onMounted(() => {
             <h1 class="font-semibold mb-3">
                 Download Files
             </h1>
+            
+
+
             <ul>
                 <li v-for="item in files" :key="item.filename">
                     <article tabindex="0" @click="viewFileData(item.id)"
@@ -55,6 +58,7 @@ onMounted(() => {
                             </header>
 
                             <footer class="text-gray-500 mt-2 text-sm">
+                                Uploaded By: {{ item.username }}<br>
                                 Date Uploaded: {{ item.updated_at }}
                             </footer>
                         </div>

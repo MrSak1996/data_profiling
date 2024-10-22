@@ -2,11 +2,11 @@
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import ProgressBar from '../progressBar.vue';
-import toast from '../toast.vue';
+import EventToast from '../EventToast.vue';
 export default {
     components: {
         ProgressBar,
-        toast
+        EventToast
     },
     props: ['activeTab'],
     data() {
@@ -39,7 +39,10 @@ export default {
                 console.log(dup_data);
 
                 if (!data || data.length === 0) {
-                    console.error('No records found.');
+                    this.triggerError("No records founds");
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                     this.$refs.progressBar.completeProgress(); // Ensure progress bar is completed
                     return;
                 }
@@ -65,6 +68,8 @@ export default {
                 });
 
                 this.setupDetailRowToggle(matchingTable, "#dedup_table");
+                
+                    
                 this.$refs.progressBar.completeProgress();
             } catch (error) {
                 console.error('Failed to fetch data:', error);
@@ -224,7 +229,12 @@ export default {
             return tb;
         },
 
-
+        triggerSuccess(message) {
+            this.$refs.toast.showToast(message, 'success');
+        },
+        triggerError(message) {
+            this.$refs.toast.showToast(message, 'error');
+        },
         toggleDropdown() {
             this.isDropdownOpen = !this.isDropdownOpen;
         },
@@ -381,4 +391,6 @@ export default {
 
         </div>
     </div>
+    <event-toast ref="toast"></event-toast>
+
 </template>

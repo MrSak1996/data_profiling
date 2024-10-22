@@ -56,4 +56,6 @@ Route::middleware('api')->group(function () {
     Route::get('/getDivision', [UserController::class, 'getDivision']);
     Route::get('/getPrograms', [DataProfilingController::class, 'getPrograms']);
     Route::get('/getUserAccount',[UserController::class,'getUserAccount']);
+    Route::get('/getUserDetails',[UserController::class,'getUserDetails']);
+    Route::get('/getRegionCode',[UserController::class,'getRegionCode']);
 });

@@ -154,10 +154,11 @@ export default {
             try {
                 this.$refs.progressBar.startProgress();
                 const formData = new FormData();
+                const userId = localStorage.getItem('userId');
+
                 formData.append("file", this.file); // Make sure this.file is a valid file object
                 formData.append("filename", this.fileAcronym);
-                formData.append('userId', 1);
-                // formData.append('userId', this.userId);
+                formData.append('userId', userId);
 
                 const response = await axios.post("api/import_excel", formData, {
                     headers: {

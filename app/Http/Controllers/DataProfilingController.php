@@ -290,13 +290,18 @@ class DataProfilingController extends Controller
 
     public function getFiles()
     {
-        $results = FileUploadModel::select(DB::raw('
-         id,
-         file_name,
-         uploaded_by,
-         updated_at,
-         created_at'))
+        $results = DB::table('file_uploaded as f')
+            ->leftJoin('users as u', 'u.id', '=', 'f.uploaded_by')
+            ->select(
+                'f.id',
+                'f.file_name',
+                'f.updated_at',
+                'f.created_at',
+                'u.username'
+            )
             ->get();
+
+       
         $recordCount = $results->count();
         if ($recordCount === 0) {
             return response()->json([

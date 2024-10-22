@@ -3,12 +3,13 @@ import ProgressBar from '../progressBar.vue';
 import EventToast from "../EventToast.vue";
 
 import axios from 'axios';
-
+import geo_map from './geo_map.vue';
 export default {
     name: 'create-user-form',
     components: {
         ProgressBar,
         EventToast,
+        geo_map
     },
     data() {
         return {
@@ -96,9 +97,9 @@ export default {
                 })
                 .catch(error => {
                     this.triggerError(error.response.data.message)
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1000);
+                    // setTimeout(() => {
+                    //     location.reload();
+                    // }, 1000);
                 });
         },
         async getAgency() {
@@ -219,8 +220,14 @@ export default {
         <!-- Address Section -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
             <div>
-                <label for="province" class="block text-sm font-medium text-gray-700">Barangay</label>
-                <input id="barangay" type="text" v-model="formData.barangay"
+                <label for="region" class="block text-sm font-medium text-gray-700">Region</label>
+                <input id="region" type="text" v-model="formData.region"
+                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="" />
+            </div>
+            <div>
+                <label for="province" class="block text-sm font-medium text-gray-700">Province</label>
+                <input id="province" type="text" v-model="formData.province"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="" />
             </div>
@@ -231,18 +238,15 @@ export default {
                     placeholder="" />
             </div>
             <div>
-                <label for="province" class="block text-sm font-medium text-gray-700">Province</label>
-                <input id="province" type="text" v-model="formData.province"
+                <label for="province" class="block text-sm font-medium text-gray-700">Barangay</label>
+                <input id="barangay" type="text" v-model="formData.barangay"
                     class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="" />
             </div>
+            
+           
 
-            <div>
-                <label for="region" class="block text-sm font-medium text-gray-700">Region</label>
-                <input id="region" type="text" v-model="formData.region"
-                    class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="" />
-            </div>
+          
         </div>
 
         <div class="mb-6">

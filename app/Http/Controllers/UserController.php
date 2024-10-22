@@ -59,8 +59,6 @@ class UserController extends Controller
         return response()->json(['message' => 'Successfully logged out'], 200);
     }
 
-
-
     public function getUserAccount()
     {
         $profiles = DB::table('users as u')
@@ -138,45 +136,74 @@ class UserController extends Controller
 
     public function createUser(Request $request)
     {
+        // Validate the incoming request data
+        $validatedData = $request->validate([
+            'agency' => 'required|integer',
+            'office' => 'required|integer',
+            'firstname' => 'required|string|max:255',
+            'middlename' => 'nullable|string|max:255',
+            'lastname' => 'required|string|max:255',
+            'ext_name' => 'nullable|string|max:10',
+            'sex' => 'required|in:1,2', // Assuming 1=Male, 2=Female
+            'birthdate' => 'required|date',
+            'emp_status' => 'required|integer',
+            'position' => 'required|string|max:255',
+            'mobile_number' => 'required|string|max:15',
+            'complete_address' => 'required|string|max:255',
+            'barangay' => 'required|string|max:100',
+            'municipality' => 'required|string|max:100',
+            'province' => 'required|string|max:100',
+            'region' => 'required|string|max:100',
+            'email_address' => 'required|email|unique:users,email',
+            'username' => 'required|string|unique:users,username|max:255',
+            'password' => 'required|string|min:8',
+            'user_role' => 'required|integer',
+        ]);
 
+        // Check if the program_id exists
+        $programId = 31; // Example program_id
+        $programExists = DB::table('dp_onbint_programs')->where('id', $programId)->exists();
+
+        if (!$programExists) {
+            return response()->json(['message' => 'Invalid program ID. User creation failed.'], 400);
+        }
+
+        // Create a new user
         try {
-            // Create a new user
             $user = User::create([
-                'id_agency' => $request->input('agency'),
-                'id_region' => $request->input('office'),
-                'program_id' => null,
-                'agency_loc' => null,
-                'first_name' => $request->input('firstname'),
-                'middle_name' => $request->input('middlename'),
-                'last_name' => $request->input('lastname'),
-                'ext_name' => $request->input('ext_name'),
-                'sex' => $request->input('sex'),
-                'date_of_birth' => $request->input('birthdate'),
+                'id_agency' => $validatedData['agency'],
+                'id_region' => $validatedData['office'],
+                'program_id' => $programId,
+                'agency_loc' => null, // or set a value if available
+                'first_name' => $validatedData['firstname'],
+                'middle_name' => $validatedData['middlename'],
+                'last_name' => $validatedData['lastname'],
+                'ext_name' => $validatedData['ext_name'],
+                'sex' => $validatedData['sex'],
+                'date_of_birth' => $validatedData['birthdate'],
                 'account_status' => '1',
-                'emp_status' => $request->input('emp_status'),
-                'position' => $request->input('position'),
-                'contact_no' => $request->input('mobile_number'),
-                'complete_address' => $request->input('complete_address'),
-                'brgy_code' => $request->input('barangay'),
-                'mun_code' => $request->input('municipality'),
-                'province_code' => $request->input('province'),
-                'region_code' => $request->input('region'),
-                'email' => $request->input('email_address'),
-                'username' => $request->input('username'),
-                'password' => Hash::make($request->input('password')),
-                'user_role' => $request->input('user_role'),
+                'emp_status' => $validatedData['emp_status'],
+                'position' => $validatedData['position'],
+                'contact_no' => $validatedData['mobile_number'],
+                'complete_address' => $validatedData['complete_address'],
+                'brgy_code' => $validatedData['barangay'],
+                'mun_code' => $validatedData['municipality'],
+                'province_code' => $validatedData['province'],
+                'region_code' => $validatedData['region'],
+                'email' => $validatedData['email_address'],
+                'username' => $validatedData['username'],
+                'password' => Hash::make($validatedData['password']),
+                'user_role' => $validatedData['user_role'],
                 'created_at' => now(),
                 'updated_at' => now(),
-                // Example password, change as needed
             ]);
 
-            // Return a success response
             return response()->json(['message' => 'User created successfully', 'user' => $user], 201);
         } catch (\Exception $e) {
-            // Handle any errors
             return response()->json(['message' => 'User creation failed', 'error' => $e->getMessage()], 500);
         }
     }
+
     public function addRoles(Request $request)
     {
         $request->validate([
@@ -190,124 +217,38 @@ class UserController extends Controller
         return response()->json(['message' => 'Updated successfully']);
     }
 
+    public function getUserDetails()
+    {
+        $query = DB::table('users as u')
+            ->leftJoin('dp_onbint_programs as p', 'p.id', '=', 'u.program_id')
+            ->select(
+                'u.id',
+                'u.first_name',
+                'u.middle_name',
+                'u.last_name',
+                DB::raw("
+                    CASE 
+                        WHEN u.user_role = 1 THEN 'Super Admin'
+                        WHEN u.user_role = 2 THEN 'Admin'
+                        WHEN u.user_role = 3 THEN 'User Validator'
+                        ELSE 'Unknown'
+                    END AS user_role
+                "),
+                'p.program_title',
+                'u.created_at'
+            )
+            ->get();
+        
+        return response()->json($query);
+    }
 
-    // public function fetchUserData($userId)
-    // {
-    //     $query = User::selectRaw('
-    //         pmo.pmo_title,
-    //         pmo.id,
-    //         DIVISION_COLOR,
-    //         tblposition.position_title,
-    //         CONCAT(users.last_name," ", users.first_name," ",users.middle_name)  as name,
-    //         users.email as email
-    //         ')
-    //         ->leftJoin('pr', 'pr.action_officer', '=', 'users.id')
-    //         ->leftJoin('pmo', 'pmo.id', '=', 'users.pmo_id')
-    //         ->leftJoin('tblposition', 'tblposition.POSITION_C', '=', 'users.position_id')
-    //         ->where('users.id', $userId);
-
-
-
-    //     // Optionally, you can print the SQL query to check
-    //     // dd($query->toSql());
-
-    //     // Execute the query and return the result
-    //     $userData = $query->first(); // Use first() instead of get() to retrieve a single result
-    //     return response()->json($userData);
-    // }
-
-    // public function getUserDetails($id)
-    // {
-    //     $query = User::selectRaw('
-    //         users.id as id,
-    //         users.last_name,
-    //         users.middle_name,
-    //         users.first_name,
-    //         users.ext_name,
-    //         users.gender,
-    //         users.birthdate,
-    //         users.contact_details,
-    //         users.email,
-    //         users.employment_status,
-    //         users.employee_no,
-    //         users.username,
-    //         users.user_role,
-    //         users.pmo_id,
-    //         users.position_id,
-    //         p.pmo_title as office,
-    //         pos.POSITION_TITLE as position
-
-    //         ')
-    //         ->leftJoin('pmo as p', 'p.id', '=', 'users.pmo_id')
-    //         ->leftJoin('tblposition as pos', 'pos.POSITION_C', '=', 'users.position_id')
-    //         ->where('users.id', $id);
-    //     $data = $query->first(); // Use first() instead of get() to retrieve a single result
-    //     return response()->json($data);
-    // }
-
-    // public function updateUserDetails(Request $request)
-    // {
-    //     // Validate the incoming request
-    //     // $request->validate([
-    //     //     'id' => 'required|integer',
-    //     //     'employee_no' => 'nullable|string',
-    //     //     'pmo_id' => 'nullable|integer',
-    //     //     'position_id' => 'nullable|integer',
-    //     //     'province' => 'nullable|string',
-    //     //     'city' => 'nullable|string',
-    //     //     'barangay' => 'nullable|string',
-    //     //     'employment_status' => 'nullable|string',
-    //     //     'first_name' => 'nullable|string',
-    //     //     'middle_name' => 'nullable|string',
-    //     //     'last_name' => 'nullable|string',
-    //     //     'ext_name' => 'nullable|string',
-    //     //     'birthdate' => 'nullable|date',
-    //     //     'gender' => 'nullable|string',
-    //     //     'contact_details' => 'nullable|string',
-    //     //     'email' => 'nullable|string|email',
-    //     //     'username' => 'nullable|string',
-    //     // ]);
-
-    //     // Hash the password if it is provided
-    //     // Check if input password is provided and not empty
-    //     if (!empty($request->input('password'))) {
-    //         $hashedPassword = hash('sha256', $request->input('password'));
-    //     } else {
-    //         // If password is not provided or empty, retrieve the existing hashed password
-    //         $existingUser = User::find($request->input('id'));
-    //         $hashedPassword = $existingUser->password;
-    //     }
-
-    //     // Update the user record
-    //     User::where('id', $request->input('id'))
-    //         ->update([
-    //             'employee_no' => $request->input('employee_no'),
-    //             'pmo_id' => $request->input('pmo_id'),
-    //             'position_id' => $request->input('position_id'),
-    //             // 'province' => $request->input('province'),
-    //             // 'city' => $request->input('city'),
-    //             'isUpdatedPassword' => 1,
-    //             'employment_status' => $request->input('employment_status'),
-    //             'first_name' => $request->input('first_name'),
-    //             'middle_name' => $request->input('middle_name'),
-    //             'last_name' => $request->input('last_name'),
-    //             'ext_name' => $request->input('ext_name'),
-    //             'birthdate' => $request->input('birthdate'),
-    //             'gender' => $request->input('gender'),
-    //             'contact_details' => $request->input('contact_details'),
-    //             'email' => $request->input('email'),
-    //             'username' => $request->input('username'),
-    //             'password' => $hashedPassword,
-    //         ]);
-
-    //     return response()->json(['message' => 'User details updated successfully']);
-    // }
-
-
-
-
-
-
-
-
+    public function getRegionCode()
+    {
+        $query = DB::table('geo_map')
+            ->select(
+                'geo_code', 'phcode_reg', 'iso_reg', 'reg_code', 'reg_shortname', 'reg_name', 'phcode_prov', 'iso_prv', 'prov_code', 'prov_name', 'phcode_mun', 'dist_code', 'district', 'mun_code', 'mun_name', 'phcode_bgy', 'bgy_code', 'bgy_name', 'lat', 'long'
+            )
+            ->get();
+        return response()->json($query);
+    }
 }

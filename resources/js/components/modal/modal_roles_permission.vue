@@ -6,7 +6,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                        Roles & Programs {{ user_id }}
+                        Roles & Programs
                     </h3>
                     <button type="button" @click="closeModal"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
@@ -72,56 +72,21 @@
                                         <th scope="col" class="px-6 py-3">
                                             Date Created
                                         </th>
-                                        <th scope="col" class="px-6 py-3">
-                                            Action
-                                        </th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th scope="row"
-                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            Apple MacBook Pro 17"
+                                    <tr v-for="item in data" :key="item.id" class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            {{ item.user_role }}
                                         </th>
                                         <td class="px-6 py-4">
-                                            Silver
+                                            {{ item.program_title }}
                                         </td>
                                         <td class="px-6 py-4">
-                                            Laptop
+                                            {{item.created_at}}
                                         </td>
-                                        <td class="px-6 py-4">
-                                            $2999
-                                        </td>
-                                    </tr>
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <th scope="row"
-                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            Microsoft Surface Pro
-                                        </th>
-                                        <td class="px-6 py-4">
-                                            White
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            Laptop PC
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            $1999
-                                        </td>
-                                    </tr>
-                                    <tr class="bg-white dark:bg-gray-800">
-                                        <th scope="row"
-                                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            Magic Mouse 2
-                                        </th>
-                                        <td class="px-6 py-4">
-                                            Black
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            Accessories
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            $99
-                                        </td>
+                                       
                                     </tr>
                                 </tbody>
                             </table>
@@ -156,6 +121,7 @@ export default {
         return {
             searchQuery: '',
             selected_id: '',
+            data:[],
         };
     },
     components:{
@@ -175,6 +141,9 @@ export default {
             );
         }
     },
+    mounted() {
+        this.getUserDetails();
+    },
     methods: {
         addRoles: function(){
             axios.post('api/addRoles',{
@@ -193,6 +162,15 @@ export default {
                         location.reload();
                     }, 1000);
                 });
+        },
+        async getUserDetails(){
+            try {
+                const response = await axios.get('api/getUserDetails');
+                this.data = response.data;
+            } catch (error) {
+                console.log(error)
+            }
+           
         },
         triggerSuccess(message) {
             this.$refs.toast.showToast(message, 'success');
