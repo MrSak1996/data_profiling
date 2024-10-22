@@ -146,7 +146,7 @@ class UserController extends Controller
             'ext_name' => 'nullable|string|max:10',
             'sex' => 'required|in:1,2', // Assuming 1=Male, 2=Female
             'birthdate' => 'required|date',
-            'emp_status' => 'required|integer',
+            'account_status' => 'required|integer',
             'position' => 'required|string|max:255',
             'mobile_number' => 'required|string|max:15',
             'complete_address' => 'required|string|max:255',
@@ -181,8 +181,7 @@ class UserController extends Controller
                 'ext_name' => $validatedData['ext_name'],
                 'sex' => $validatedData['sex'],
                 'date_of_birth' => $validatedData['birthdate'],
-                'account_status' => '1',
-                'emp_status' => $validatedData['emp_status'],
+                'account_status' => $validatedData['emp_status'],
                 'position' => $validatedData['position'],
                 'contact_no' => $validatedData['mobile_number'],
                 'complete_address' => $validatedData['complete_address'],
